@@ -30,19 +30,26 @@ const config: DocsThemeConfig = {
   useNextSeoProps() {
       return {
         titleTemplate: '%s - Flutter Bunny CLI',
-        defaultTitle: 'Flutter Bunny CLI - A Flutter Development Tool'
+        defaultTitle: 'Flutter Bunny CLI - A Flutter Development Tool',
+        description: 'A powerful CLI tool for creating and managing Flutter applications with best practices and consistent architecture',
+        openGraph: {
+          type: 'website',
+          locale: 'en_US',
+          url: 'https://flutterbunny.xyz/',
+          site_name: 'Flutter Bunny CLI',
+          title: 'Flutter Bunny CLI - A Flutter Development Tool',
+          description: 'A powerful CLI tool for creating and managing Flutter applications with best practices and consistent architecture',
+          images: [
+            {
+              url: 'https://flutterbunny.xyz/bunny_logo.png'
+              width: 1200,
+              height: 630,
+              alt: 'Flutter Bunny CLI',
+            }
+          ],
+        },
       }
     },
-//   head: (
-//       <>
-//         <link rel="icon" href="/favicon.ico" sizes="any" />
-//         <link rel="icon" href="/favicon-16x16.png" type="image/png" sizes="16x16" />
-//         <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32" />
-//         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-//         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-//         <meta name="description" content="Flutter Bunny CLI Documentation" />
-//       </>
-//     ),
 }
 
 export default config

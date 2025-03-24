@@ -13,7 +13,7 @@ const config: DocsThemeConfig = {
       />
     </div>
   ),
-  // Remove the title property - it's not part of DocsThemeConfig
+
   project: {
     link: 'https://github.com/demola234/flutter_bunny_cli/',
   },
@@ -21,7 +21,7 @@ const config: DocsThemeConfig = {
   footer: {
     text: 'Flutter Bunny CLI Docs',
   },
-  head: () => ( // Change to a function that returns JSX
+  head: () => (
     <>
       <link rel="icon" type="image/png" href="/bunny_logo.png" />
     </>
@@ -40,7 +40,7 @@ const config: DocsThemeConfig = {
         description: 'A powerful CLI tool for creating and managing Flutter applications with best practices and consistent architecture',
         images: [
           {
-            url: 'https://flutterbunny.xyz/bunny_logo.png', // Added missing comma here
+            url: 'https://www.flutterbunny.xyz/bunny_logo.png',
             width: 1200,
             height: 630,
             alt: 'Flutter Bunny CLI',

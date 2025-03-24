@@ -34,7 +34,7 @@ const config: DocsThemeConfig = {
       openGraph: {
         type: 'website',
         locale: 'en_US',
-        url: 'https://flutterbunny.xyz/',
+        url: 'https://www.flutterbunny.xyz/',
         site_name: 'Flutter Bunny CLI',
         title: 'Flutter Bunny CLI - A Flutter Development Tool',
         description: 'A powerful CLI tool for creating and managing Flutter applications with best practices and consistent architecture',

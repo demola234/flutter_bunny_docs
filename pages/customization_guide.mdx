@@ -1,0 +1,311 @@
+# Customization Guide
+
+Flutter Bunny CLI is highly customizable, allowing you to tailor it to your team's specific requirements. This guide explains how to customize templates, configurations, and more.
+
+## Configuration
+
+### Configuration File
+
+Flutter Bunny uses a configuration file to store your preferences. The configuration file is located at:
+
+```
+~/.flutter_bunny/config.yaml
+
+```
+
+### Viewing Configuration
+
+To view your current configuration:
+
+```bash
+flutter_bunny config show
+
+```
+
+### Setting Configuration Values
+
+To set a configuration value:
+
+```bash
+flutter_bunny config set <key> <value>
+
+```
+
+Examples:
+
+```bash
+# Set default architecture
+flutter_bunny config set default_architecture clean_architecture
+
+# Set default state management
+flutter_bunny config set default_state_management riverpod
+
+# Enable a feature flag
+flutter_bunny config set features.localization true
+
+```
+
+### Resetting Configuration
+
+To reset to default configuration:
+
+```bash
+flutter_bunny config reset
+
+```
+
+## Custom Templates
+
+Flutter Bunny allows you to create custom templates for project generation, components, and more.
+
+### Template Directory
+
+Custom templates are stored in:
+
+```
+~/.flutter_bunny/templates/
+
+```
+
+### Creating a Custom Template
+
+To create a custom template:
+
+1. Create a directory in the templates folder with a descriptive name
+2. Add your template files with placeholders for dynamic content
+3. Create a `bunny.yaml` file to define template metadata
+
+Example `bunny.yaml`:
+
+```yaml
+name: custom_clean_architecture
+description: Custom Clean Architecture template with additional features
+version: 1.0.0
+author: Your Name
+variables:
+  - name: project_name
+    description: The name of the project
+    required: true
+  - name: organization
+    description: Organization name for bundle ID
+    default: com.example
+
+```
+
+### Using Custom Templates
+
+To use your custom template:
+
+```bash
+flutter_bunny create app --template custom_clean_architecture
+
+```
+
+## Customizing Component Generation
+
+### Custom Component Templates
+
+You can create custom templates for generated components:
+
+1. Create a directory in `~/.flutter_bunny/templates/components/`
+2. Add template files for your custom component
+
+Example custom widget template (`~/.flutter_bunny/templates/components/widgets/custom_widget.dart.template`):
+
+```dart
+import 'package:flutter/material.dart';
+
+class {{name}} extends {{widget_type}} {
+  {{#if hasParameters}}
+  {{#each parameters}}
+  final {{type}} {{name}};
+  {{/each}}
+
+  const {{name}}({
+    Key? key,
+    {{#each parameters}}
+    required this.{{name}},
+    {{/each}}
+  }) : super(key: key);
+  {{else}}
+  const {{name}}({Key? key}) : super(key: key);
+  {{/if}}
+
+  {{#if isStateful}}
+  @override
+  _{{name}}State createState() => _{{name}}State();
+}
+
+class _{{name}}State extends State<{{name}}> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      // TODO: Implement {{name}}
+    );
+  }
+  {{else}}
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      // TODO: Implement {{name}}
+    );
+  }
+  {{/if}}
+}
+
+```
+
+### Using Custom Component Templates
+
+Use your custom templates by setting them as default or specifying them:
+
+```bash
+# Set as default
+flutter_bunny config set templates.components.widget custom_widget
+
+# Use for a specific generation
+flutter_bunny generate widget --name MyWidget --template custom_widget
+
+```
+
+## Customizing Architecture
+
+### Custom Architecture Templates
+
+You can create custom architecture templates:
+
+1. Create a directory in `~/.flutter_bunny/templates/architectures/`
+2. Define your architecture structure with template files
+3. Create a `bunny.yaml` to define metadata
+
+Example `bunny.yaml` for custom architecture:
+
+```yaml
+name: feature_first_architecture
+description: Feature-first architecture with shared core
+version: 1.0.0
+author: Your Name
+structure:
+  - lib/
+    - core/
+      - config/
+      - theme/
+      - network/
+      - utils/
+    - features/
+      - auth/
+        - data/
+        - domain/
+        - presentation/
+      - home/
+        - data/
+        - domain/
+        - presentation/
+    - main.dart
+
+```
+
+### Using Custom Architecture
+
+Use your custom architecture by setting it as default or specifying it:
+
+```bash
+# Set as default
+flutter_bunny config set default_architecture feature_first_architecture
+
+# Use for a specific project
+flutter_bunny create app --architecture feature_first_architecture
+
+```
+
+## Customizing State Management
+
+### Custom State Management Templates
+
+You can create custom state management templates:
+
+1. Create a directory in `~/.flutter_bunny/templates/state_management/`
+2. Define your state management pattern with template files
+3. Create a `bunny.yaml` to define metadata
+
+Example for custom state management:
+
+```yaml
+name: flux_pattern
+description: Facebook's Flux pattern implementation
+version: 1.0.0
+author: Your Name
+dependencies:
+  - flux: ^2.0.0
+
+```
+
+### Using Custom State Management
+
+Use your custom state management by setting it as default or specifying it:
+
+```bash
+# Set as default
+flutter_bunny config set default_state_management flux_pattern
+
+# Use for a specific project
+flutter_bunny create app --state-management flux_pattern
+
+```
+
+## Project-Level Configuration
+
+You can also create project-level configuration by adding a `bunny.yaml` file to your project root:
+
+```yaml
+# bunny.yaml
+architecture: clean_architecture
+state_management: riverpod
+template_paths:
+  - .bunny/templates
+generate:
+  output_paths:
+    screens: lib/presentation/pages
+    widgets: lib/presentation/widgets
+    models: lib/data/models
+
+```
+
+This allows you to customize Flutter Bunny behavior specific to this project.
+
+## Team Sharing
+
+To share your customizations with your team:
+
+1. Create a Git repository with your templates and configurations
+2. Add installation scripts
+3. Document your customizations
+
+Example installation script:
+
+```bash
+#!/bin/bash
+# install_team_templates.sh
+
+# Create Flutter Bunny directories
+mkdir -p ~/.flutter_bunny/templates
+
+# Clone the team templates repository
+git clone https://github.com/your-team/flutter-bunny-templates.git ~/.flutter_bunny/team_templates
+
+# Copy templates to Flutter Bunny directory
+cp -R ~/.flutter_bunny/team_templates/templates/* ~/.flutter_bunny/templates/
+
+# Set team defaults
+flutter_bunny config set default_architecture team_clean_architecture
+flutter_bunny config set default_state_management team_bloc
+
+```
+
+## Best Practices
+
+1. **Version Control**: Keep your templates and configurations in version control
+2. **Documentation**: Document your customizations thoroughly
+3. **Consistency**: Maintain consistency across team templates
+4. **Testing**: Test your templates before sharing them
+5. **Feedback**: Gather feedback from team members and iterate on templates

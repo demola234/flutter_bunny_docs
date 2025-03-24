@@ -1,0 +1,104 @@
+# Build Command
+
+The `build` command runs the `build_runner` tool to generate code for your Flutter project. This is particularly useful for generating code from annotations, such as JSON serialization, freezed models, or injectable dependencies.
+
+## Usage
+
+```bash
+flutter_bunny build [options]
+
+```
+
+Alias: `flutter_bunny codegen [options]`
+
+## Options
+
+- `-watch` or `w`: Watch for file changes and rebuild as needed
+- `-delete-conflicting-outputs` or `d`: Delete conflicting outputs to resolve build conflicts (default: true)
+- `-directory` or `C`: Directory in which to run the build_runner (default: ".")
+
+## Examples
+
+### Run Build Runner Once
+
+```bash
+flutter_bunny build
+
+```
+
+This will run the build_runner once to generate code from annotations.
+
+### Run Build Runner in Watch Mode
+
+```bash
+flutter_bunny build --watch
+
+```
+
+This will start the build_runner in watch mode, which will automatically regenerate code when files change.
+
+### Run Build Runner with Custom Options
+
+```bash
+flutter_bunny build --delete-conflicting-outputs --directory ./packages/my_package
+
+```
+
+This will run the build_runner in the specified directory with the option to delete conflicting outputs.
+
+## Common Use Cases
+
+The `build` command is commonly used for:
+
+1. **JSON Serialization**: With packages like `json_serializable`
+2. **Immutable Models**: With packages like `freezed`
+3. **Dependency Injection**: With packages like `injectable`
+4. **Routing**: With packages like `auto_route`
+5. **State Management**: With code generation features in packages like Bloc
+
+## Example Workflow
+
+1. Add annotations to your code:
+
+```dart
+// user.dart
+import 'package:json_annotation/json_annotation.dart';
+
+part 'user.g.dart';
+
+@JsonSerializable()
+class User {
+  final int id;
+  final String name;
+  final String email;
+
+  User({required this.id, required this.name, required this.email});
+
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+  Map<String, dynamic> toJson() => _$UserToJson(this);
+}
+
+```
+
+1. Run the build command:
+
+```bash
+flutter_bunny build
+
+```
+
+1. The generated code (e.g., `user.g.dart`) will be created automatically.
+
+## Troubleshooting
+
+If you encounter issues with the build command:
+
+1. **Conflicting Outputs**: Use the `-delete-conflicting-outputs` flag
+2. **Build Failures**: Check your annotations and dependencies
+3. **Missing Dependencies**: Ensure all required packages are in your `pubspec.yaml`
+4. **Path Issues**: Use the `-directory` option to specify the correct path
+
+## Related Commands
+
+- [`analyze`](https://claude.ai/chat/analyze.md): Run static analysis on your Flutter project
+- [`doctor`](https://claude.ai/chat/doctor.md): Check the health of your Flutter project

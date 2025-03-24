@@ -1,0 +1,200 @@
+# Command Cheat Sheet
+
+A quick reference guide for Flutter Bunny CLI commands.
+
+## Installation
+
+```bash
+# Install with Dart pub
+dart pub global activate flutter_bunny
+
+# Install with Homebrew (macOS)
+brew tap demola234/homebrew-tap
+brew install flutter_bunny
+
+# Verify installation
+flutter_bunny --version
+```
+
+## Create Command
+
+```bash
+# Create interactive
+flutter_bunny create app
+
+# Create with options
+flutter_bunny create app --name my_app --architecture clean_architecture --state-management riverpod
+
+# Create with organization
+flutter_bunny create app --name my_app --org com.mycompany
+```
+
+## Generate Command
+
+```bash
+# Generate screen
+flutter_bunny generate screen --name HomeScreen
+flutter_bunny generate screen --name ProfileScreen --route /profile
+flutter_bunny generate screen --name ProductDetailScreen --params "id:int,name:String"
+
+# Generate widget
+flutter_bunny generate widget --name CustomButton
+flutter_bunny generate widget --name ProductCard --stateful
+flutter_bunny generate widget --name UserAvatar --params "imageUrl:String,size:double"
+
+# Generate model
+flutter_bunny generate model --name User --fields "id:int,name:String,email:String"
+flutter_bunny generate model --name Product --fields "id:int,name:String,price:double,inStock:bool" --json
+flutter_bunny generate model --name Address --fields "street:String,city:String,zipCode:String" --freezed
+```
+
+## Build Command
+
+```bash
+# Run build_runner once
+flutter_bunny build
+
+# Run in watch mode
+flutter_bunny build --watch
+
+# Run with options
+flutter_bunny build --delete-conflicting-outputs
+flutter_bunny build --directory ./packages/my_package
+```
+
+## Analyze Command
+
+```bash
+# Run analysis
+flutter_bunny analyze
+
+# Run analysis with fixes
+flutter_bunny analyze --fix
+
+# Run analysis with options
+flutter_bunny analyze --directory ./lib
+flutter_bunny analyze --fatal-infos
+flutter_bunny analyze --no-fatal-warnings
+```
+
+## Doctor Command
+
+```bash
+# Check project health
+flutter_bunny doctor
+
+# Fix issues automatically
+flutter_bunny doctor --fix
+
+# Check specific directory
+flutter_bunny doctor --directory ./packages/my_package
+
+# Skip Flutter SDK check
+flutter_bunny doctor --project-only
+```
+
+## Config Command
+
+```bash
+# Show all config
+flutter_bunny config show
+
+# Show specific config key
+flutter_bunny config show --key default_architecture
+
+# Set config value
+flutter_bunny config set default_architecture clean_architecture
+flutter_bunny config set default_state_management riverpod
+flutter_bunny config set features.localization true
+
+# Reset config
+flutter_bunny config reset
+flutter_bunny config reset --confirm
+```
+
+## Update Command
+
+```bash
+# Update Flutter Bunny CLI
+flutter_bunny update
+
+# Force update
+flutter_bunny update --force
+```
+
+## Global Options
+
+These options can be used with any command:
+
+```bash
+# Show help
+flutter_bunny --help
+flutter_bunny <command> --help
+
+# Show version
+flutter_bunny --version
+
+# Enable verbose logging
+flutter_bunny --verbose <command>
+```
+
+## Common Workflows
+
+### Creating a New Project and Adding Features
+
+```bash
+# Create project
+flutter_bunny create app --name my_app
+
+# Generate screens
+flutter_bunny generate screen --name HomeScreen
+flutter_bunny generate screen --name DetailScreen --params "id:String"
+
+# Generate models
+flutter_bunny generate model --name Product --fields "id:String,name:String,price:double" --json
+
+# Generate widgets
+flutter_bunny generate widget --name ProductCard --stateful --params "product:Product,onTap:Function"
+
+# Run build_runner
+flutter_bunny build
+
+# Check project health
+flutter_bunny doctor
+```
+
+### Setting Up Preferred Defaults
+
+```bash
+# Set architecture preference
+flutter_bunny config set default_architecture clean_architecture
+
+# Set state management preference
+flutter_bunny config set default_state_management riverpod
+
+# Enable default features
+flutter_bunny config set features.dark_mode true
+flutter_bunny config set features.localization true
+
+# Set default organization
+flutter_bunny config set organization com.mycompany
+```
+
+### Maintaining an Existing Project
+
+```bash
+# Check for issues
+flutter_bunny doctor
+
+# Fix issues
+flutter_bunny doctor --fix
+
+# Run static analysis
+flutter_bunny analyze
+
+# Apply fixes from analysis
+flutter_bunny analyze --fix
+
+# Update build_runner generated code
+flutter_bunny build
+```

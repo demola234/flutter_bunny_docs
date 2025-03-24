@@ -1,0 +1,670 @@
+# Project Structure
+
+Flutter Bunny CLI creates projects with a consistent and organized structure based on your chosen architecture. This guide explains the project structure for each supported architecture pattern.
+
+## Clean Architecture
+
+Clean Architecture divides your application into layers with clear responsibilities, promoting separation of concerns and testability.
+
+### Directory Structure
+
+```
+lib/
+├── core/
+│   ├── errors/
+│   │   ├── exceptions.dart
+│   │   └── failures.dart
+│   ├── network/
+│   │   ├── network_info.dart
+│   │   └── api_client.dart
+│   ├── utils/
+│   │   ├── constants.dart
+│   │   └── app_utils.dart
+│   └── theme/
+│       ├── app_theme.dart
+│       └── app_colors.dart
+├── data/
+│   ├── datasources/
+│   │   ├── local/
+│   │   │   └── user_local_data_source.dart
+│   │   └── remote/
+│   │       └── user_remote_data_source.dart
+│   ├── models/
+│   │   └── user_model.dart
+│   └── repositories/
+│       └── user_repository_impl.dart
+├── domain/
+│   ├── entities/
+│   │   └── user.dart
+│   ├── repositories/
+│   │   └── user_repository.dart
+│   └── usecases/
+│       ├── get_user.dart
+│       └── update_user.dart
+├── presentation/
+│   ├── blocs/
+│   │   └── user/
+│   │       ├── user_bloc.dart
+│   │       ├── user_event.dart
+│   │       └── user_state.dart
+│   ├── pages/
+│   │   ├── home_page.dart
+│   │   └── profile_page.dart
+│   └── widgets/
+│       └── user_profile_card.dart
+└── main.dart
+
+```
+
+### Layer Responsibilities
+
+### Core
+
+The `core/` directory contains application-wide utilities, configurations, and shared functionality:
+
+- `errors/`: Exception and failure classes
+- `network/`: Network-related functionality
+- `utils/`: Utility functions and constants
+- `theme/`: App theme and styling
+
+### Data
+
+The `data/` directory implements data retrieval and storage logic:
+
+- `datasources/`: Local and remote data sources
+- `models/`: Data models (typically implements entities from domain layer)
+- `repositories/`: Implementation of repositories defined in domain layer
+
+### Domain
+
+The `domain/` directory contains the core business logic:
+
+- `entities/`: Business objects
+- `repositories/`: Abstract repository interfaces
+- `usecases/`: Business logic use cases
+
+### Presentation
+
+The `presentation/` directory handles UI and user interaction:
+
+- `blocs/`: State management (can be changed based on your choice)
+- `pages/`: Screen and page widgets
+- `widgets/`: Reusable UI components
+
+## MVVM (Model-View-ViewModel)
+
+MVVM separates UI logic from business logic through ViewModels that act as intermediaries.
+
+### Directory Structure
+
+```
+lib/
+├── models/
+│   ├── user_model.dart
+│   └── product_model.dart
+├── services/
+│   ├── api_service.dart
+│   ├── auth_service.dart
+│   └── storage_service.dart
+├── view_models/
+│   ├── home_view_model.dart
+│   └── profile_view_model.dart
+├── views/
+│   ├── screens/
+│   │   ├── home_screen.dart
+│   │   └── profile_screen.dart
+│   └── widgets/
+│       ├── custom_button.dart
+│       └── product_card.dart
+└── main.dart
+
+```
+
+### Component Responsibilities
+
+### Models
+
+The `models/` directory contains data structures and business logic:
+
+- Data models
+- Business entities
+- Data validation logic
+
+### Services
+
+The `services/` directory handles external interactions:
+
+- API communication
+- Local storage
+- Authentication
+- Other services
+
+### ViewModels
+
+The `view_models/` directory contains the presentation logic:
+
+- Data processing for views
+- Business logic coordination
+- State management
+- View interactions
+
+### Views
+
+The `views/` directory contains UI components:
+
+- `screens/`: Full-page screens
+- `widgets/`: Reusable UI components
+
+## MVC (Model-View-Controller)
+
+MVC is a classic pattern that divides an application into three interconnected components.
+
+### Directory Structure
+
+```
+lib/
+├── models/
+│   ├── user_model.dart
+│   └── product_model.dart
+├── services/
+│   ├── api_service.dart
+│   ├── auth_service.dart
+│   └── storage_service.dart
+├── views/
+│   ├── controllers/
+│   │   ├── home_controller.dart
+│   │   └── profile_controller.dart
+│   ├── models/
+│   │   ├── home_view_model.dart
+│   │   └── profile_view_model.dart
+│   └── views/
+│       ├── home_view.dart
+│       └── profile_view.dart
+└── main.dart
+
+```
+
+### Component Responsibilities
+
+### Models
+
+The `models/` directory contains data structures and business logic:
+
+- Data models
+- Business entities
+- Data validation logic
+
+### Services
+
+The `services/` directory handles external interactions:
+
+- API communication
+- Local storage
+- Authentication
+- Other services
+
+### Views
+
+The `views/` directory contains all view-related components:
+
+- `controllers/`: Handle user input and update models/views
+- `models/`: View-specific data models
+- `views/`: UI components and screens
+
+## Feature-First Structure
+
+Flutter Bunny also supports a feature-first structure, which organizes code by features rather than architectural layers.
+
+### Directory Structure
+
+```
+lib/
+├── core/
+│   ├── config/
+│   ├── theme/
+│   ├── network/
+│   └── utils/
+├── features/
+│   ├── auth/
+│   │   ├── data/
+│   │   ├── domain/
+│   │   └── presentation/
+│   ├── home/
+│   │   ├── data/
+│   │   ├── domain/
+│   │   └── presentation/
+│   └── profile/
+│       ├── data/
+│       ├── domain/
+│       └── presentation/
+├── shared/
+│   ├── widgets/
+│   └── models/
+└── main.dart
+
+```
+
+### Component Responsibilities
+
+### Core
+
+The `core/` directory contains application-wide utilities and configurations.
+
+### Features
+
+The `features/` directory contains feature-specific modules, each with its own layers:
+
+- `data/`: Data sources and repositories
+- `domain/`: Business logic and entities
+- `presentation/`: UI components and state management
+
+### Shared
+
+The `shared/` directory contains components shared across features:
+
+- `widgets/`: Reusable UI components
+- `models/`: Shared data models
+
+## Test Structure
+
+Flutter Bunny also creates a consistent test structure:
+
+```
+test/
+├── core/
+│   └── utils/
+│       └── app_utils_test.dart
+├── data/
+│   ├── datasources/
+│   │   └── user_remote_data_source_test.dart
+│   ├── models/
+│   │   └── user_model_test.dart
+│   └── repositories/
+│       └── user_repository_impl_test.dart
+├── domain/
+│   └── usecases/
+│       └── get_user_test.dart
+├── presentation/
+│   ├── blocs/
+│   │   └── user_bloc_test.dart
+│   └── pages/
+│       └── home_page_test.dart
+└── widget_test.dart
+
+```
+
+## Additional Files (Continued)
+
+Flutter Bunny creates these additional files to ensure your project is properly configured:
+
+- `analysis_options.yaml`: Lint and static analysis rules
+- `README.md`: Project documentation
+- `.gitignore`: Configured for Flutter projects
+- `LICENSE`: Default MIT license (or as configured)
+- `.vscode/launch.json`: VS Code launch configurations
+- `ios/` and `android/`: Platform-specific configurations
+- `web/`: Web platform support if enabled
+- `assets/`: Directory for project assets
+
+## Dependency Management
+
+The `pubspec.yaml` file is generated with common dependencies based on your chosen architecture and state management solution:
+
+### Clean Architecture + Bloc
+
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  # Core
+  equatable: ^2.0.5
+  dartz: ^0.10.1
+  get_it: ^7.6.0
+  internet_connection_checker: ^1.0.0+1
+
+  # Data layer
+  http: ^1.1.0
+  shared_preferences: ^2.2.0
+
+  # Presentation layer
+  flutter_bloc: ^8.1.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mocktail: ^1.0.0
+  bloc_test: ^9.1.4
+
+```
+
+### MVVM + Provider
+
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  # Core
+  provider: ^6.0.5
+  http: ^1.1.0
+  shared_preferences: ^2.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mocktail: ^1.0.0
+
+```
+
+## Navigation Structure
+
+Flutter Bunny also sets up navigation based on your preferences:
+
+### Named Routes
+
+Standard Flutter named routes in `main.dart`:
+
+```dart
+return MaterialApp(
+  title: 'My App',
+  theme: AppTheme.lightTheme,
+  initialRoute: '/',
+  routes: {
+    '/': (context) => const HomePage(),
+    '/profile': (context) => const ProfilePage(),
+    '/settings': (context) => const SettingsPage(),
+  },
+);
+
+```
+
+### Auto Route
+
+If using auto_route for navigation:
+
+```
+lib/
+├── core/
+│   └── router/
+│       ├── app_router.dart
+│       └── app_router.gr.dart
+
+```
+
+```dart
+// app_router.dart
+@AdaptiveAutoRouter(
+  replaceInRouteName: 'Page,Route',
+  routes: <AutoRoute>[
+    AutoRoute(page: HomePage, initial: true),
+    AutoRoute(page: ProfilePage),
+    AutoRoute(page: SettingsPage),
+  ],
+)
+class $AppRouter {}
+
+```
+
+### Go Router
+
+If using go_router for navigation:
+
+```
+lib/
+├── core/
+│   └── router/
+│       └── app_router.dart
+
+```
+
+```dart
+// app_router.dart
+final router = GoRouter(
+  routes: [
+    GoRoute(
+      path: '/',
+      builder: (context, state) => const HomePage(),
+    ),
+    GoRoute(
+      path: '/profile',
+      builder: (context, state) => const ProfilePage(),
+    ),
+    GoRoute(
+      path: '/settings',
+      builder: (context, state) => const SettingsPage(),
+    ),
+  ],
+);
+
+```
+
+## State Management Structure
+
+The state management structure varies based on your chosen solution:
+
+### BLoC/Cubit
+
+```
+lib/
+├── presentation/
+│   ├── blocs/
+│   │   ├── auth/
+│   │   │   ├── auth_bloc.dart
+│   │   │   ├── auth_event.dart
+│   │   │   └── auth_state.dart
+│   │   └── theme/
+│   │       ├── theme_cubit.dart
+│   │       └── theme_state.dart
+
+```
+
+### Provider
+
+```
+lib/
+├── providers/
+│   ├── auth_provider.dart
+│   └── theme_provider.dart
+
+```
+
+### Riverpod
+
+```
+lib/
+├── providers/
+│   ├── auth_providers.dart
+│   └── theme_providers.dart
+
+```
+
+### GetX
+
+```
+lib/
+├── controllers/
+│   ├── auth_controller.dart
+│   └── theme_controller.dart
+├── bindings/
+│   └── app_bindings.dart
+
+```
+
+## Dependency Injection
+
+Flutter Bunny sets up dependency injection based on your preferences:
+
+### Get It
+
+```
+lib/
+├── core/
+│   └── di/
+│       └── service_locator.dart
+
+```
+
+```dart
+// service_locator.dart
+final sl = GetIt.instance;
+
+Future<void> init() async {
+  // Blocs
+  sl.registerFactory(() => AuthBloc(login: sl(), register: sl()));
+
+  // Use cases
+  sl.registerLazySingleton(() => Login(sl()));
+  sl.registerLazySingleton(() => Register(sl()));
+
+  // Repositories
+  sl.registerLazySingleton<AuthRepository>(
+    () => AuthRepositoryImpl(
+      remoteDataSource: sl(),
+      localDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  // Data sources
+  sl.registerLazySingleton<AuthRemoteDataSource>(
+    () => AuthRemoteDataSourceImpl(client: sl()),
+  );
+  sl.registerLazySingleton<AuthLocalDataSource>(
+    () => AuthLocalDataSourceImpl(sharedPreferences: sl()),
+  );
+
+  // External
+  final sharedPreferences = await SharedPreferences.getInstance();
+  sl.registerLazySingleton(() => sharedPreferences);
+  sl.registerLazySingleton(() => http.Client());
+  sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
+  sl.registerLazySingleton(() => InternetConnectionChecker());
+}
+
+```
+
+### Riverpod
+
+```dart
+// providers.dart
+final authRepositoryProvider = Provider<AuthRepository>((ref) {
+  final apiClient = ref.watch(apiClientProvider);
+  return AuthRepositoryImpl(apiClient);
+});
+
+final authStateProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
+  final repository = ref.watch(authRepositoryProvider);
+  return AuthNotifier(repository);
+});
+
+```
+
+### GetX
+
+```dart
+// app_bindings.dart
+class AppBindings extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut<ApiClient>(() => ApiClientImpl());
+    Get.lazyPut<AuthRepository>(() => AuthRepositoryImpl(Get.find()));
+    Get.lazyPut<AuthController>(() => AuthController(Get.find()));
+  }
+}
+
+```
+
+## Generated Code
+
+If you choose to use code generation features, Flutter Bunny will set up the appropriate structure:
+
+### JSON Serialization
+
+```dart
+// user_model.dart
+@JsonSerializable()
+class UserModel {
+  final int id;
+  final String name;
+  final String email;
+
+  UserModel({required this.id, required this.name, required this.email});
+
+  factory UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);
+  Map<String, dynamic> toJson() => _$UserModelToJson(this);
+}
+
+```
+
+### Freezed
+
+```dart
+// user.dart
+@freezed
+class User with _$User {
+  const factory User({
+    required int id,
+    required String name,
+    required String email,
+  }) = _User;
+
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+}
+
+```
+
+## Platform-Specific Structure
+
+Flutter Bunny also configures platform-specific structures:
+
+### Android
+
+```
+android/
+├── app/
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── kotlin/
+│   │   │   │   └── com/
+│   │   │   │       └── example/
+│   │   │   │           └── myapp/
+│   │   │   │               └── MainActivity.kt
+│   │   │   └── res/
+│   │   │       ├── drawable/
+│   │   │       ├── mipmap/
+│   │   │       └── values/
+│   ├── build.gradle
+│   └── AndroidManifest.xml
+├── gradle/
+├── build.gradle
+└── settings.gradle
+
+```
+
+### iOS
+
+```
+ios/
+├── Runner/
+│   ├── AppDelegate.swift
+│   ├── Assets.xcassets/
+│   ├── Base.lproj/
+│   └── Info.plist
+├── Runner.xcodeproj/
+└── Runner.xcworkspace/
+
+```
+
+## Customizing Project Structure
+
+You can customize the project structure using Flutter Bunny's configuration:
+
+```bash
+# Set a custom template
+flutter_bunny config set templates.project_structure custom_structure
+
+# Use a custom template for a new project
+flutter_bunny create app --template custom_structure
+
+```
+
+For more details on customizing the project structure, see the [Customization Guide](https://claude.ai/chat/customization.md).

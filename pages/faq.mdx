@@ -1,0 +1,253 @@
+# Frequently Asked Questions
+
+## General Questions
+
+### What is Flutter Bunny CLI?
+
+Flutter Bunny CLI is a powerful command-line tool for creating and managing Flutter applications with best practices and consistent architecture. It helps you set up projects with popular architecture patterns, generate code for common components, and maintain your Flutter projects.
+
+### Is Flutter Bunny CLI free to use?
+
+Yes, Flutter Bunny CLI is open-source software available under the MIT license, which allows for free use, modification, and distribution.
+
+### What Flutter versions are supported?
+
+Flutter Bunny CLI supports Flutter 2.0 and above, with a primary focus on Flutter 3.0+.
+
+### Can I use Flutter Bunny CLI with existing projects?
+
+Yes, many of Flutter Bunny CLI's commands (like `generate`, `analyze`, `doctor`, etc.) can be used with existing Flutter projects. However, some features work best with projects created using Flutter Bunny.
+
+### What operating systems are supported?
+
+Flutter Bunny CLI works on all operating systems supported by Flutter and Dart:
+
+- Windows
+- macOS
+- Linux
+
+## Installation
+
+### How do I install Flutter Bunny CLI?
+
+There are two main ways to install Flutter Bunny CLI:
+
+Using Dart pub:
+
+```bash
+dart pub global activate flutter_bunny
+
+```
+
+Using Homebrew (macOS only):
+
+```bash
+brew tap demola234/homebrew-tap
+brew install flutter_bunny
+
+```
+
+### Why can't I run the flutter_bunny command after installation?
+
+This is likely because the Dart pub global bin directory is not in your PATH. Add it to your PATH:
+
+**Windows**:
+
+```
+%APPDATA%\Pub\Cache\bin
+
+```
+
+**macOS/Linux**:
+
+```
+$HOME/.pub-cache/bin
+
+```
+
+### How do I update Flutter Bunny CLI?
+
+```bash
+flutter_bunny update
+
+```
+
+Or using Dart pub:
+
+```bash
+dart pub global activate flutter_bunny
+
+```
+
+### How do I uninstall Flutter Bunny CLI?
+
+```bash
+dart pub global deactivate flutter_bunny
+
+```
+
+Or if installed with Homebrew:
+
+```bash
+brew uninstall flutter_bunny
+
+```
+
+## Architecture and Project Structure
+
+### What architecture patterns are supported?
+
+Flutter Bunny CLI supports three main architecture patterns:
+
+- Clean Architecture
+- MVVM (Model-View-ViewModel)
+- MVC (Model-View-Controller)
+
+### Can I create my own architecture pattern?
+
+Yes, you can create custom templates and architecture patterns by defining them in the templates directory. See the [Customization Guide](https://claude.ai/chat/customization.md) for more details.
+
+### How does Flutter Bunny CLI handle state management?
+
+Flutter Bunny CLI supports multiple state management solutions:
+
+- Provider
+- Riverpod
+- Bloc/Cubit
+- GetX
+- MobX
+- Redux
+
+You can choose your preferred solution when creating a new project.
+
+## Commands and Usage
+
+### What commands are available in Flutter Bunny CLI?
+
+The main commands are:
+
+- `create`: Create a new Flutter application
+- `generate`: Generate various Flutter components
+- `build`: Run build_runner to generate code
+- `analyze`: Run static analysis on your Flutter project
+- `doctor`: Check the health of your Flutter project
+- `config`: Manage Flutter Bunny CLI configuration
+- `update`: Update the CLI tool to the latest version
+
+### How do I generate a new screen/widget/model?
+
+```bash
+# Generate a screen
+flutter_bunny generate screen --name HomeScreen
+
+# Generate a widget
+flutter_bunny generate widget --name CustomButton --stateful
+
+# Generate a model
+flutter_bunny generate model --name User --fields "id:int,name:String,email:String" --json
+
+```
+
+### Can I customize the generated code?
+
+Yes, you can customize the templates used for code generation. See the [Customization Guide](https://claude.ai/chat/customization.md) for more details.
+
+### How do I run the analyzer?
+
+```bash
+flutter_bunny analyze
+
+```
+
+To apply fixes automatically:
+
+```bash
+flutter_bunny analyze --fix
+
+```
+
+### What does the doctor command check for?
+
+The `doctor` command checks for:
+
+- Flutter SDK installation and configuration
+- Project structure and configuration
+- Missing files and directories
+- Dependencies and their versions
+- Common project issues
+
+## Customization
+
+### How do I customize Flutter Bunny CLI's behavior?
+
+You can customize Flutter Bunny CLI using the `config` command:
+
+```bash
+# View current configuration
+flutter_bunny config show
+
+# Set a configuration value
+flutter_bunny config set default_architecture clean_architecture
+
+```
+
+### Where are the configuration files stored?
+
+Configuration files are stored in the `~/.flutter_bunny/` directory.
+
+### Can I share my customizations with my team?
+
+Yes, you can create custom templates and share them with your team. See the [Customization Guide](https://claude.ai/chat/customization.md) for details on team sharing.
+
+## Troubleshooting
+
+### The `flutter_bunny` command is not found
+
+Make sure the Dart pub global bin directory is in your PATH. See the installation section above.
+
+### Error: "Could not find a file named 'pubspec.yaml'"
+
+This error occurs when running a Flutter Bunny command in a directory that isn't a Flutter project. Make sure you're in the root directory of your Flutter project.
+
+### Build command is failing
+
+If the `build` command is failing, try:
+
+1. Checking if build_runner is in your dependencies
+2. Using the `-delete-conflicting-outputs` flag
+3. Making sure your annotations are correct
+
+### Generate command creates files in the wrong location
+
+This might happen if your project structure doesn't match what Flutter Bunny expects. You can customize the output paths in your configuration:
+
+```bash
+flutter_bunny config set generate.output_paths.screens "lib/ui/screens"
+
+```
+
+### How do I report issues with Flutter Bunny CLI?
+
+You can report issues on the [GitHub repository](https://github.com/demola234/flutter_bunny/issues).
+
+## Advanced Usage
+
+### Can Flutter Bunny CLI be used in CI/CD pipelines?
+
+Yes, Flutter Bunny CLI can be integrated into CI/CD pipelines for tasks like code generation, analysis, and project health checks.
+
+### Does Flutter Bunny CLI support Flutter packages and plugins?
+
+Yes, you can use Flutter Bunny CLI with packages and plugins. Some features may need to be adapted to the package structure.
+
+### Can I extend Flutter Bunny CLI with custom commands?
+
+Currently, extending Flutter Bunny CLI directly is not supported. However, you can create custom templates and configurations to adapt it to your needs.
+
+### Does Flutter Bunny CLI support internationalization?
+
+Yes, you can enable internationalization support when creating a new project or add it later using configuration options.
+
+### Can I use Flutter Bunny CLI with Flutter web and desktop?
+
+Yes, Flutter Bunny CLI works with all Flutter platforms, including mobile, web, and desktop.

@@ -1,0 +1,184 @@
+import { Callout } from 'nextra/components'
+import { Steps } from 'nextra/components'
+import { Tabs, Tab } from 'nextra/components'
+
+# Create Command
+
+The `create` command allows you to generate a new Flutter application interactively or with specific options. It guides you through selecting your project's architecture, state management solution, and more.
+
+<Callout emoji="💡">
+  The create command is typically the first command you'll use with Flutter Bunny CLI. It sets up your project with a consistent structure based on your chosen architecture.
+</Callout>
+
+## Usage
+
+```bash
+# Create a new Flutter application interactively
+flutter_bunny create app
+
+# Create with specific options
+flutter_bunny create app --name my_awesome_app --architecture clean_architecture --state-management riverpod
+```
+
+## Options
+
+| Option | Description | Default |
+| --- | --- | --- |
+| `--name` | The name of the project | Interactive prompt |
+| `--architecture` | Architecture pattern (clean_architecture, mvvm, mvc) | From config or interactive prompt |
+| `--state-management` | State management solution | From config or interactive prompt |
+| `--features` | Features you would like to include on your project | Authentication, User Profile, Settings |
+| `--modules` | Modules you'd like to include on your project | Network Layer, Localization, Push Notifications |
+
+
+## Interactive Creation Process
+
+When running `flutter_bunny create app` without options, you'll be guided through an interactive process:
+
+<Steps>
+  ### Project Name
+
+  Enter a name for your project. This should be in snake_case (lowercase with underscores).
+
+  ### Architecture Selection
+
+  Choose from supported architecture patterns:
+  - Clean Architecture
+  - MVVM (Model-View-ViewModel)
+  - MVC (Model-View-Controller)
+
+  ### State Management
+
+  Select your preferred state management solution:
+  - Provider
+  - Riverpod
+  - Bloc/Cubit
+  - GetX
+  - MobX
+  - Redux
+
+  ### Features
+
+  Select additional features to include:
+  - Authentication
+  - User Profile
+  - Settings
+
+  ### Modules
+
+  Select additional modules to include:
+  - Network Layer
+  - Localization
+  - Push Notification
+
+  ### Project Creation
+
+  Flutter Bunny CLI will create your project with the selected options.
+</Steps>
+
+## Architecture Options
+
+<Tabs items={['Clean Architecture', 'MVVM', 'MVC']}>
+  <Tab>
+    Creates a project with the following structure:
+
+    ```
+    lib/
+    ├── core/
+    │   ├── errors/
+    │   ├── network/
+    │   ├── utils/
+    │   └── theme/
+    ├── data/
+    │   ├── datasources/
+    │   ├── models/
+    │   └── repositories/
+    ├── domain/
+    │   ├── entities/
+    │   ├── repositories/
+    │   └── usecases/
+    ├── presentation/
+    │   ├── blocs/
+    │   ├── pages/
+    │   └── widgets/
+    └── main.dart
+    ```
+  </Tab>
+  <Tab>
+    Creates a project with the following structure:
+
+    ```
+    lib/
+    ├── models/
+    ├── services/
+    ├── view_models/
+    ├── views/
+    │   ├── screens/
+    │   └── widgets/
+    └── main.dart
+    ```
+  </Tab>
+  <Tab>
+    Creates a project with the following structure:
+
+    ```
+    lib/
+    ├── models/
+    ├── services/
+    ├── views/
+    │   ├── controllers/
+    │   ├── models/
+    │   └── views/
+    └── main.dart
+    ```
+  </Tab>
+</Tabs>
+
+## State Management Options
+
+Flutter Bunny supports multiple state management solutions:
+
+- **Provider** - Simple and flexible state management
+- **Riverpod** - Evolution of Provider with improved patterns
+- **Bloc/Cubit** - Predictable state management with events and states
+- **GetX** - Lightweight state management with utilities
+- **MobX** - Reactive state management
+- **Redux** - Predictable state container
+
+## Examples
+
+### Create a New App Interactively
+
+```bash
+flutter_bunny create app
+```
+
+This will start an interactive CLI where you can configure your project step by step.
+
+### Create a New App with Specified Options
+
+```bash
+flutter_bunny create app --name shopping_app --architecture clean_architecture --state-management bloc
+```
+
+This creates a new Flutter application named "shopping_app" with Clean Architecture and the BLoC state management pattern.
+
+### Create an App with Custom Organization
+
+```bash
+flutter_bunny create app --name travel_app --org com.mycompany.travel
+```
+
+This creates a new Flutter application with the bundle ID "com.mycompany.travel.travel_app".
+
+## Next Steps
+
+After creating your application, you might want to:
+
+1. [Generate components](/commands/generate) with the `generate` command
+2. [Configure your project settings](/commands/config) with the `config` command
+3. [Run static analysis](/commands/analyze) with the `analyze` command
+
+<Callout>
+  Looking for more details on architecture? Check out the [Architecture Guide](/architecture) for in-depth information on each architecture pattern.
+</Callout>

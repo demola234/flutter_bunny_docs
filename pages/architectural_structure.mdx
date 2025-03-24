@@ -1,0 +1,252 @@
+# Architecture Guide
+
+Flutter Bunny CLI supports multiple architecture patterns to help you structure your Flutter applications in a clean, maintainable way. This guide explains the available architecture options and how to use them.
+
+## Supported Architectures
+
+Flutter Bunny supports three primary architecture patterns:
+
+1. **Clean Architecture**
+2. **MVVM (Model-View-ViewModel)**
+3. **MVC (Model-View-Controller)**
+
+## Clean Architecture
+
+Clean Architecture separates your application into layers with clear responsibilities, promoting separation of concerns and testability.
+
+### Layers
+
+1. **Presentation Layer**: UI components, widgets, pages, and state management
+2. **Domain Layer**: Business logic, entities, and use cases
+3. **Data Layer**: Data sources, repositories, and models
+
+### Directory Structure
+
+```
+lib/
+├── core/
+│   ├── errors/
+│   │   ├── exceptions.dart
+│   │   └── failures.dart
+│   ├── network/
+│   │   ├── network_info.dart
+│   │   └── api_client.dart
+│   ├── utils/
+│   │   ├── constants.dart
+│   │   └── validators.dart
+│   └── theme/
+│       ├── app_theme.dart
+│       └── app_colors.dart
+├── data/
+│   ├── datasources/
+│   │   ├── local/
+│   │   │   └── user_local_data_source.dart
+│   │   └── remote/
+│   │       └── user_remote_data_source.dart
+│   ├── models/
+│   │   └── user_model.dart
+│   └── repositories/
+│       └── user_repository_impl.dart
+├── domain/
+│   ├── entities/
+│   │   └── user.dart
+│   ├── repositories/
+│   │   └── user_repository.dart
+│   └── usecases/
+│       ├── get_user.dart
+│       └── update_user.dart
+├── presentation/
+│   ├── blocs/
+│   │   └── user/
+│   │       ├── user_bloc.dart
+│   │       ├── user_event.dart
+│   │       └── user_state.dart
+│   ├── pages/
+│   │   ├── home_page.dart
+│   │   └── profile_page.dart
+│   └── widgets/
+│       └── user_profile_card.dart
+└── main.dart
+```
+
+### Key Benefits
+
+- **Maintainability**: Clear separation between layers
+- **Testability**: Easy to test each layer in isolation
+- **Scalability**: Easy to add new features
+- **Independence**: Framework agnostic core business logic
+
+## MVVM (Model-View-ViewModel)
+
+MVVM separates UI logic from business logic through ViewModels, which act as intermediaries between the View and Model layers.
+
+### Components
+
+1. **Model**: Data and business logic
+2. **View**: UI components with minimal logic
+3. **ViewModel**: Mediator between Model and View
+
+### Directory
+
+Directory Structure for MVVM
+
+```
+lib/
+├── models/
+│   ├── user_model.dart
+│   └── product_model.dart
+├── services/
+│   ├── api_service.dart
+│   ├── auth_service.dart
+│   └── storage_service.dart
+├── view_models/
+│   ├── home_view_model.dart
+│   └── profile_view_model.dart
+├── views/
+│   ├── screens/
+│   │   ├── home_screen.dart
+│   │   └── profile_screen.dart
+│   └── widgets/
+│       ├── custom_button.dart
+│       └── product_card.dart
+└── main.dart
+
+```
+
+### Key Benefits
+
+- **Data Binding**: Easy to implement two-way data binding
+- **Reusability**: ViewModels can be reused across multiple views
+- **Testability**: ViewModels are easy to test without UI dependencies
+- **Separation of Concerns**: Clear separation between UI and business logic
+
+## MVC (Model-View-Controller)
+
+MVC is a classic pattern that divides an application into three interconnected parts to separate internal representations from user interfaces.
+
+### Components
+
+1. **Model**: Data structure and business logic
+2. **View**: User interface components
+3. **Controller**: Handles user input and updates models/views
+
+### Directory Structure
+
+```
+lib/
+├── models/
+│   ├── user_model.dart
+│   └── product_model.dart
+├── services/
+│   ├── api_service.dart
+│   ├── auth_service.dart
+│   └── storage_service.dart
+├── views/
+│   ├── controllers/
+│   │   ├── home_controller.dart
+│   │   └── profile_controller.dart
+│   ├── models/
+│   │   ├── home_view_model.dart
+│   │   └── profile_view_model.dart
+│   └── views/
+│       ├── home_view.dart
+│       └── profile_view.dart
+└── main.dart
+
+```
+
+### Key Benefits
+
+- **Simplicity**: Easy to understand and implement
+- **Fast Development**: Quick to build for smaller applications
+- **Multiple Views**: Can have multiple views for the same model
+- **Established Pattern**: Widely understood and adopted
+
+## Choosing an Architecture
+
+When deciding which architecture to use, consider the following factors:
+
+### Clean Architecture
+
+**Best for:**
+
+- Large, complex applications
+- Teams with specialized roles
+- Projects requiring high testability
+- Applications with complex business logic
+
+### MVVM
+
+**Best for:**
+
+- Applications with reactive UIs
+- Projects using state management solutions like Provider or Riverpod
+- Teams familiar with reactive programming
+- Applications where ViewModels need to be reused
+
+### MVC
+
+**Best for:**
+
+- Smaller applications
+- Rapid prototyping
+- Teams new to Flutter
+- Projects with simpler state management needs
+
+## Architecture and State Management
+
+Each architecture pattern can work with different state management solutions:
+
+### Clean Architecture
+
+- **BLoC/Cubit**: Excellent fit for presentation layer
+- **Riverpod**: Works well for dependency injection and state
+- **Redux**: Can be integrated in the presentation layer
+
+### MVVM
+
+- **Provider**: Natural fit for exposing ViewModels
+- **MobX**: Great for reactive ViewModels
+- **Riverpod**: Enhanced Provider functionality
+
+### MVC
+
+- **GetX**: Combines controllers and state management
+- **Provider**: Simple state management
+- **Flutter's built-in state**: StatefulWidget for simple cases
+
+## Creating a Project with a Specific Architecture
+
+To create a new Flutter project with your preferred architecture:
+
+```bash
+# Interactive
+flutter_bunny create app
+
+# Specific architecture
+flutter_bunny create app --name my_app --architecture clean_architecture
+
+# Architecture with state management
+flutter_bunny create app --name my_app --architecture mvvm --state-management provider
+
+```
+
+## Customizing Architecture Templates
+
+You can customize the architecture templates to match your team's specific requirements:
+
+1. Create custom templates in the `~/.flutter_bunny/templates/` directory
+2. Use your custom template with the `-template` flag:
+
+```bash
+flutter_bunny create app --template custom_clean_architecture
+
+```
+
+## Best Practices
+
+1. **Consistency**: Stick to one architecture pattern throughout your project
+2. **Documentation**: Document your architecture decisions and patterns
+3. **Testing**: Write tests for each layer of your architecture
+4. **Dependency Injection**: Use a DI solution to manage dependencies
+5. **Single Responsibility**: Each class should have a single responsibility

@@ -1,0 +1,118 @@
+# Update Command
+
+The `update` command allows you to update the Flutter Bunny CLI to the latest version. It checks for updates and installs them if available.
+
+## Usage
+
+```bash
+flutter_bunny update [options]
+
+```
+
+## Options
+
+- `-force` or `f`: Force update even if the CLI tool is up to date
+
+## Examples
+
+### Check for Updates and Install if Available
+
+```bash
+flutter_bunny update
+
+```
+
+This will check if there's a newer version available and update if necessary.
+
+### Force Update
+
+```bash
+flutter_bunny update --force
+
+```
+
+This will update the CLI tool even if it's already at the latest version.
+
+## How It Works
+
+The update command performs the following steps:
+
+1. Checks the current installed version
+2. Queries the Dart pub.dev repository for the latest version
+3. Compares versions to determine if an update is needed
+4. Downloads and installs the latest version if necessary
+5. Verifies the installation was successful
+
+## Example Output
+
+If already up to date:
+
+```
+Flutter Bunny is already at the latest version: 1.0.6-beta.5
+
+```
+
+If an update is available:
+
+```
+Updating Flutter Bunny from 1.0.6-beta.4 to 1.0.6-beta.5...
+Flutter Bunny updated to 1.0.6-beta.5
+
+✓ Update successful!
+
+To verify the update, run:
+  flutter_bunny --version
+
+```
+
+## Update Channels
+
+Flutter Bunny may have different release channels:
+
+- **Stable**: Well-tested releases for production use
+- **Beta**: Preview releases with new features
+- **Dev**: Development versions for testing
+
+By default, the update command uses the same channel as your current installation.
+
+## Troubleshooting
+
+If you encounter issues with the update command:
+
+### Permission Errors
+
+If you see permission errors, you may need to run with sudo or fix your directory permissions:
+
+```bash
+sudo flutter_bunny update
+
+```
+
+### Network Issues
+
+If you can't connect to pub.dev, check your internet connection or proxy settings.
+
+### Version Verification
+
+If the update seems to have completed but the version hasn't changed:
+
+1. Run `flutter_bunny --version` to verify
+2. Check your PATH to ensure you're running the updated version
+3. Try running `pub global activate flutter_bunny` manually
+
+## Best Practices
+
+1. **Regular updates**: Keep Flutter Bunny up to date for the latest features and fixes
+2. **Backup projects**: Before updating to a major version, back up your projects
+3. **Read release notes**: Check the changelog for breaking changes
+4. **Check compatibility**: Ensure the new version works with your Flutter version
+
+## Automatic Update Checks
+
+Flutter Bunny automatically checks for updates periodically when you run commands. If an update is available, you'll see a notification:
+
+```
+A new version of Flutter Bunny is available: 1.0.6-beta.5 (current: 1.0.6-beta.4)
+Run 'flutter_bunny update' to get the latest version.
+
+```

@@ -1,0 +1,169 @@
+# Config Command
+
+The `config` command allows you to manage Flutter Bunny CLI configuration settings. You can view, modify, and reset configuration values to customize how the CLI behaves.
+
+## Usage
+
+```bash
+flutter_bunny config <subcommand> [options]
+
+```
+
+## Subcommands
+
+- `show`: Display the current configuration
+- `set`: Set a configuration value
+- `reset`: Reset configuration to defaults
+
+## Show Configuration
+
+View the current Flutter Bunny CLI configuration:
+
+```bash
+# Show all configuration
+flutter_bunny config show
+
+# Show a specific configuration key
+flutter_bunny config show --key default_architecture
+
+```
+
+### Options
+
+- `-key` or `k`: Show only the specified configuration key
+
+### Example Output
+
+```
+Flutter Bunny CLI Configuration:
+default_architecture: clean_architecture
+default_state_management: riverpod
+templates:
+  path: /Users/username/.flutter_bunny/templates
+features:
+  authentication: true
+  dark_mode: true
+  localization: false
+  offline_support: false
+
+```
+
+## Set Configuration
+
+Set a configuration value:
+
+```bash
+flutter_bunny config set <key> <value>
+
+```
+
+### Example Usage
+
+```bash
+# Set default architecture
+flutter_bunny config set default_architecture mvvm
+
+# Set default state management
+flutter_bunny config set default_state_management bloc
+
+# Set a feature flag
+flutter_bunny config set features.localization true
+
+# Set a list value
+flutter_bunny config set enabled_lints [always_declare_return_types,prefer_single_quotes]
+
+```
+
+## Reset Configuration
+
+Reset configuration to default values:
+
+```bash
+# Reset with confirmation prompt
+flutter_bunny config reset
+
+# Reset without confirmation
+flutter_bunny config reset --confirm
+
+```
+
+### Options
+
+- `-confirm` or `y`: Confirm reset without prompting
+
+## Configuration Values
+
+Here are the common configuration values you can modify:
+
+### General Settings
+
+- `default_architecture`: Default architecture for new projects (clean_architecture, mvvm, mvc)
+- `default_state_management`: Default state management for new projects (provider, riverpod, bloc, getx, mobx, redux)
+- `organization`: Default organization name for bundle IDs (e.g., com.example)
+
+### Template Settings
+
+- `templates.path`: Path to custom templates directory
+- `templates.default`: Default template to use when not specified
+
+### Feature Flags
+
+- `features.authentication`: Include authentication module in new projects
+- `features.dark_mode`: Include dark mode support in new projects
+- `features.localization`: Include localization support in new projects
+- `features.offline_support`: Include offline support in new projects
+
+### Code Generation
+
+- `codegen.use_freezed`: Use freezed for model classes
+- `codegen.use_json_serializable`: Use json_serializable for JSON parsing
+- `codegen.use_auto_route`: Use auto_route for navigation
+
+## Configuration File Location
+
+The Flutter Bunny CLI configuration is stored in:
+
+```
+~/.flutter_bunny/config.yaml
+
+```
+
+You can edit this file directly, but it's recommended to use the `config` command to ensure proper formatting.
+
+## Examples
+
+### View All Configuration
+
+```bash
+flutter_bunny config show
+
+```
+
+### Set Default Architecture
+
+```bash
+flutter_bunny config set default_architecture clean_architecture
+
+```
+
+### Enable Localization
+
+```bash
+flutter_bunny config set features.localization true
+
+```
+
+### Reset to Defaults
+
+```bash
+flutter_bunny config reset
+
+```
+
+## Best Practices
+
+1. **Review configuration**: Understand available options before changing
+2. **Set project defaults**: Configure your preferred architecture and state management
+3. **Use for teams**: Create a standard configuration for team consistency
+4. **Version control**: Share configuration in your project repository when appropriate
+5. **Document changes**: Note custom configurations in your project README

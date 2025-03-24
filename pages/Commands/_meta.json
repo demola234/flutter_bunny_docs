@@ -1,0 +1,9 @@
+{
+  "create": "Create",
+  "generate": "Generate",
+  "build": "Build",
+  "analyze": "Analyze",
+  "doctor": "Doctor",
+  "config": "Config",
+  "update": "Update"
+}

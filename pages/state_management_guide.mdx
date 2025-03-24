@@ -1,0 +1,272 @@
+# State Management Guide
+
+Flutter Bunny CLI supports multiple state management solutions to help you handle application state effectively. This guide explains the available options and how to use them in your Flutter projects.
+
+## Supported State Management Solutions
+
+Flutter Bunny supports the following state management options:
+
+1. **Provider**
+2. **Riverpod**
+3. **Bloc/Cubit**
+4. **GetX**
+5. **MobX**
+6. **Redux**
+
+## Provider
+
+Provider is a simple approach to state management that uses InheritedWidget under the hood, making it straightforward to use and understand.
+
+### Key Features
+
+- Dependency injection
+- Simple state management
+- Lightweight and easy to learn
+- Built on InheritedWidget
+
+### Example Structure with Provider
+
+```
+lib/
+├── models/
+│   └── user_model.dart
+├── providers/
+│   ├── auth_provider.dart
+│   └── theme_provider.dart
+├── screens/
+│   └── home_screen.dart
+└── main.dart
+
+```
+
+### When to Use Provider
+
+- Small to medium-sized applications
+- Simple state management needs
+- New Flutter developers
+- When you want minimal boilerplate
+
+## Riverpod
+
+Riverpod is an evolution of Provider with improved patterns, compile-time safety, and enhanced functionality.
+
+### Key Features
+
+- Type safety and compile-time checks
+- Provider overrides
+- Dependency overrides for testing
+- Auto-disposal of providers
+- Family providers for parameterized dependencies
+
+### Example Structure with Riverpod
+
+```
+lib/
+├── models/
+│   └── user_model.dart
+├── providers/
+│   ├── auth_providers.dart
+│   └── theme_providers.dart
+├── screens/
+│   └── home_screen.dart
+└── main.dart
+
+```
+
+### When to Use Riverpod
+
+- Medium to large applications
+- When you need type safety
+- When testing is a priority
+- When you need more complex provider relationships
+
+## Bloc/Cubit
+
+BLoC (Business Logic Component) provides a predictable state management pattern using streams and events.
+
+### Key Features
+
+- Clear separation of UI and business logic
+- Event-driven architecture
+- Predictable state transitions
+- Extensive testing capabilities
+- Strong community support
+
+### Example Structure with Bloc
+
+```
+lib/
+├── blocs/
+│   └── auth/
+│       ├── auth_bloc.dart
+│       ├── auth_event.dart
+│       └── auth_state.dart
+├── models/
+│   └── user_model.dart
+├── repositories/
+│   └── auth_repository.dart
+├── screens/
+│   └── home_screen.dart
+└── main.dart
+
+```
+
+### When to Use Bloc/Cubit
+
+- Medium to large applications
+- Complex state transitions
+- When you need a standardized approach
+- When you prefer an event-driven architecture
+
+## GetX
+
+GetX is a lightweight state management, dependency injection, and route management solution.
+
+### Key Features
+
+- Minimal boilerplate
+- Performance optimized
+- Simple reactive state management
+- Built-in dependency injection
+- Navigation management
+- Utils for common tasks
+
+### Example Structure with GetX
+
+```
+lib/
+├── controllers/
+│   ├── auth_controller.dart
+│   └── home_controller.dart
+├── models/
+│   └── user_model.dart
+├── screens/
+│   └── home_screen.dart
+├── routes/
+│   └── app_pages.dart
+└── main.dart
+
+```
+
+### When to Use GetX
+
+- When you want an all-in-one solution
+- Rapid development
+- Smaller apps that need quick setup
+- When performance is a priority
+
+## MobX
+
+MobX is a battle-tested library for reactive state management with a simple and scalable approach.
+
+### Key Features
+
+- Observable state
+- Computed values
+- Reactions
+- Actions
+- Code generation for boilerplate
+
+### Example Structure with MobX
+
+```
+lib/
+├── models/
+│   └── user.dart
+├── stores/
+│   ├── auth_store.dart
+│   └── counter_store.dart
+├── screens/
+│   └── home_screen.dart
+└── main.dart
+
+```
+
+### When to Use MobX
+
+- When you prefer reactive programming
+- Applications with complex UI updates
+- When you need fine-grained reactivity
+- If you have experience with MobX in other platforms
+
+## Redux
+
+Redux provides a predictable state container with a unidirectional data flow.
+
+### Key Features
+
+- Single source of truth (store)
+- State is read-only
+- Changes are made with pure functions (reducers)
+- Middleware for side effects
+- Dev tools for time-travel debugging
+
+### Example Structure with Redux
+
+```
+lib/
+├── actions/
+│   └── auth_actions.dart
+├── models/
+│   └── app_state.dart
+├── reducers/
+│   ├── app_reducer.dart
+│   └── auth_reducer.dart
+├── middleware/
+│   └── auth_middleware.dart
+├── screens/
+│   └── home_screen.dart
+└── main.dart
+
+```
+
+### When to Use Redux
+
+- Large applications with complex state
+- When you need predictable state management
+- Teams familiar with Redux in other platforms
+- When you need extensive debugging capabilities
+
+## Creating a Project with Specific State Management
+
+To create a new Flutter project with your preferred state management:
+
+```bash
+# Interactive
+flutter_bunny create app
+
+# Specific state management
+flutter_bunny create app --name my_app --state-management riverpod
+
+# Architecture with state management
+flutter_bunny create app --name my_app --architecture clean_architecture --state-management bloc
+
+```
+
+## Comparing State Management Solutions
+
+| Solution | Complexity | Boilerplate | Learning Curve | Performance | Testing |
+| --- | --- | --- | --- | --- | --- |
+| Provider | Low | Low | Easy | Good | Good |
+| Riverpod | Medium | Medium | Medium | Very Good | Excellent |
+| Bloc/Cubit | Medium-High | High | Steep | Good | Excellent |
+| GetX | Low | Very Low | Easy | Excellent | Good |
+| MobX | Medium | Medium | Medium | Very Good | Good |
+| Redux | High | High | Steep | Good | Excellent |
+
+## Best Practices
+
+1. **Choose based on project needs**: Consider the size and complexity of your application
+2. **Consistency**: Use the same state management solution throughout your project
+3. **Separation of concerns**: Keep UI logic separate from business logic
+4. **Testing**: Write unit tests for your state management code
+5. **Documentation**: Document your state management approach for your team
+
+## Advanced Usage
+
+For advanced state management scenarios, consider:
+
+1. **Combining solutions**: Use multiple state management solutions for different parts of your app
+2. **Custom solutions**: Create your own state management based on these patterns
+3. **Persistence**: Add persistence to your state with packages like Hive or SharedPreferences
+4. **Global vs. Local state**: Decide which state needs to be global and which can be local

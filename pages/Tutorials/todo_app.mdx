@@ -1,0 +1,1358 @@
+# Tutorial: Creating a Todo App with Flutter Bunny CLI
+
+In this tutorial, we'll build a simple Todo application using Flutter Bunny CLI. We'll cover creating a new project, generating components, and implementing basic functionality.
+
+## Prerequisites
+
+- Flutter SDK installed
+- Flutter Bunny CLI installed
+- Basic knowledge of Flutter and Dart
+
+## Step 1: Installation and Setup
+
+First, make sure you have Flutter Bunny CLI installed:
+
+```bash
+dart pub global activate flutter_bunny
+
+# Verify installation
+flutter_bunny --version
+
+```
+
+## Step 2: Create a New Project
+
+Let's create a new Flutter application with Clean Architecture and Bloc for state management:
+
+```bash
+flutter_bunny create app --name todo_app --architecture clean_architecture --state-management bloc
+
+```
+
+This will create a new Flutter project with the specified architecture and state management.
+
+## Step 3: Navigate to the Project
+
+```bash
+cd todo_app
+
+```
+
+## Step 4: Create the Todo Model
+
+Let's generate a Todo model:
+
+```bash
+flutter_bunny generate model --name Todo --fields "id:String,title:String,description:String,isCompleted:bool,createdAt:DateTime" --json
+
+```
+
+This will create a Todo model with JSON serialization in the data layer.
+
+## Step 5: Generate Screens
+
+Now, let's generate the screens we need:
+
+```bash
+# Generate the home screen
+flutter_bunny generate screen --name TodoListScreen
+
+# Generate the add/edit todo screen
+flutter_bunny generate screen --name TodoFormScreen --params "todoId:String?"
+
+```
+
+## Step 6: Generate Widgets
+
+Next, let's generate some widgets:
+
+```bash
+# Generate a todo item widget
+flutter_bunny generate widget --name TodoItem --params "todo:Todo,onToggle:Function,onDelete:Function,onEdit:Function"
+
+# Generate a todo form widget
+flutter_bunny generate widget --name TodoForm --params "initialTodo:Todo?,onSubmit:Function"
+
+```
+
+## Step 7: Implement the Data Layer
+
+Now, let's implement the data layer. First, open the generated Todo model and make any necessary adjustments:
+
+```dart
+// lib/data/models/todo_model.dart
+
+import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
+import '../../domain/entities/todo.dart';
+
+part 'todo_model.g.dart';
+
+@JsonSerializable()
+class TodoModel extends Equatable {
+  final String id;
+  final String title;
+  final String description;
+  final bool isCompleted;
+  final DateTime createdAt;
+
+  const TodoModel({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.isCompleted,
+    required this.createdAt,
+  });
+
+  factory TodoModel.fromJson(Map<String, dynamic> json) => _$TodoModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TodoModelToJson(this);
+
+  TodoEntity toEntity() {
+    return TodoEntity(
+      id: id,
+      title: title,
+      description: description,
+      isCompleted: isCompleted,
+      createdAt: createdAt,
+    );
+  }
+
+  factory TodoModel.fromEntity(TodoEntity entity) {
+    return TodoModel(
+      id: entity.id,
+      title: entity.title,
+      description: entity.description,
+      isCompleted: entity.isCompleted,
+      createdAt: entity.createdAt,
+    );
+  }
+
+  @override
+  List<Object?> get props => [id, title, description, isCompleted, createdAt];
+}
+
+```
+
+Create a Todo entity in the domain layer:
+
+```dart
+// lib/domain/entities/todo.dart
+
+import 'package:equatable/equatable.dart';
+
+class TodoEntity extends Equatable {
+  final String id;
+  final String title;
+  final String description;
+  final bool isCompleted;
+  final DateTime createdAt;
+
+  const TodoEntity({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.isCompleted,
+    required this.createdAt,
+  });
+
+  TodoEntity copyWith({
+    String? id,
+    String? title,
+    String? description,
+    bool? isCompleted,
+    DateTime? createdAt,
+  }) {
+    return TodoEntity(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      isCompleted: isCompleted ?? this.isCompleted,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
+  @override
+  List<Object?> get props => [id, title, description, isCompleted, createdAt];
+}
+
+```
+
+## Step 8: Create Data Sources and Repository
+
+Create the Todo repository interface:
+
+```dart
+// lib/domain/repositories/todo_repository.dart
+
+import 'package:dartz/dartz.dart';
+import '../entities/todo.dart';
+import '../../core/errors/failures.dart';
+
+abstract class TodoRepository {
+  Future<Either<Failure, List<TodoEntity>>> getTodos();
+  Future<Either<Failure, TodoEntity>> getTodoById(String id);
+  Future<Either<Failure, TodoEntity>> addTodo(TodoEntity todo);
+  Future<Either<Failure, TodoEntity>> updateTodo(TodoEntity todo);
+  Future<Either<Failure, void>> deleteTodo(String id);
+}
+
+```
+
+Create the local data source:
+
+```dart
+// lib/data/datasources/local/todo_local_data_source.dart
+
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../models/todo_model.dart';
+import '../../../core/errors/exceptions.dart';
+
+abstract class TodoLocalDataSource {
+  Future<List<TodoModel>> getTodos();
+  Future<TodoModel> getTodoById(String id);
+  Future<TodoModel> addTodo(TodoModel todo);
+  Future<TodoModel> updateTodo(TodoModel todo);
+  Future<void> deleteTodo(String id);
+}
+
+class TodoLocalDataSourceImpl implements TodoLocalDataSource {
+  final SharedPreferences sharedPreferences;
+  final String cacheKey = 'CACHED_TODOS';
+
+  TodoLocalDataSourceImpl({required this.sharedPreferences});
+
+  @override
+  Future<TodoModel> addTodo(TodoModel todo) async {
+    final todos = await getTodos();
+    todos.add(todo);
+    await _cacheTodos(todos);
+    return todo;
+  }
+
+  @override
+  Future<void> deleteTodo(String id) async {
+    final todos = await getTodos();
+    todos.removeWhere((todo) => todo.id == id);
+    await _cacheTodos(todos);
+  }
+
+  @override
+  Future<TodoModel> getTodoById(String id) async {
+    final todos = await getTodos();
+    final todo = todos.firstWhere(
+      (todo) => todo.id == id,
+      orElse: () => throw CacheException('Todo not found'),
+    );
+    return todo;
+  }
+
+  @override
+  Future<List<TodoModel>> getTodos() async {
+    try {
+      final jsonString = sharedPreferences.getString(cacheKey);
+      if (jsonString == null) {
+        return [];
+      }
+      final jsonList = json.decode(jsonString) as List<dynamic>;
+      return jsonList
+          .map((jsonMap) => TodoModel.fromJson(jsonMap))
+          .toList();
+    } catch (e) {
+      throw CacheException('Failed to get todos from cache');
+    }
+  }
+
+  @override
+  Future<TodoModel> updateTodo(TodoModel todo) async {
+    final todos = await getTodos();
+    final index = todos.indexWhere((t) => t.id == todo.id);
+    if (index == -1) {
+      throw CacheException('Todo not found');
+    }
+    todos[index] = todo;
+    await _cacheTodos(todos);
+    return todo;
+  }
+
+  Future<void> _cacheTodos(List<TodoModel> todos) async {
+    final jsonString = json.encode(todos.map((todo) => todo.toJson()).toList());
+    await sharedPreferences.setString(cacheKey, jsonString);
+  }
+}
+
+```
+
+Implement the repository:
+
+```dart
+// lib/data/repositories/todo_repository_impl.dart
+
+import 'package:dartz/dartz.dart';
+import '../../domain/entities/todo.dart';
+import '../../domain/repositories/todo_repository.dart';
+import '../datasources/local/todo_local_data_source.dart';
+import '../models/todo_model.dart';
+import '../../core/errors/exceptions.dart';
+import '../../core/errors/failures.dart';
+
+class TodoRepositoryImpl implements TodoRepository {
+  final TodoLocalDataSource localDataSource;
+
+  TodoRepositoryImpl({required this.localDataSource});
+
+  @override
+  Future<Either<Failure, TodoEntity>> addTodo(TodoEntity todo) async {
+    try {
+      final todoModel = TodoModel.fromEntity(todo);
+      final result = await localDataSource.addTodo(todoModel);
+      return Right(result.toEntity());
+    } on CacheException catch (e) {
+      return Left(CacheFailure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteTodo(String id) async {
+    try {
+      await localDataSource.deleteTodo(id);
+      return const Right(null);
+    } on CacheException catch (e) {
+      return Left(CacheFailure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, TodoEntity>> getTodoById(String id) async {
+    try {
+      final result = await localDataSource.getTodoById(id);
+      return Right(result.toEntity());
+    } on CacheException catch (e) {
+      return Left(CacheFailure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<TodoEntity>>> getTodos() async {
+    try {
+      final result = await localDataSource.getTodos();
+      return Right(result.map((model) => model.toEntity()).toList());
+    } on CacheException catch (e) {
+      return Left(CacheFailure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, TodoEntity>> updateTodo(TodoEntity todo) async {
+    try {
+      final todoModel = TodoModel.fromEntity(todo);
+      final result = await localDataSource.updateTodo(todoModel);
+      return Right(result.toEntity());
+    } on CacheException catch (e) {
+      return Left(CacheFailure(e.message));
+    }
+  }
+}
+
+```
+
+## Step 9: Implement Use Cases
+
+Let's create use cases in the domain layer:
+
+```dart
+// lib/domain/usecases/get_todos.dart
+
+import 'package:dartz/dartz.dart';
+import '../entities/todo.dart';
+import '../repositories/todo_repository.dart';
+import '../../core/errors/failures.dart';
+import '../../core/usecases/usecase.dart';
+
+class GetTodos implements UseCase<List<TodoEntity>, NoParams> {
+  final TodoRepository repository;
+
+  GetTodos(this.repository);
+
+  @override
+  Future<Either<Failure, List<TodoEntity>>> call(NoParams params) {
+    return repository.getTodos();
+  }
+}
+
+```
+
+```dart
+// lib/domain/usecases/get_todo_by_id.dart
+
+import 'package:dartz/dartz.dart';
+import 'package:equatable/equatable.dart';
+import '../entities/todo.dart';
+import '../repositories/todo_repository.dart';
+import '../../core/errors/failures.dart';
+import '../../core/usecases/usecase.dart';
+
+class GetTodoById implements UseCase<TodoEntity, Params> {
+  final TodoRepository repository;
+
+  GetTodoById(this.repository);
+
+  @override
+  Future<Either<Failure, TodoEntity>> call(Params params) {
+    return repository.getTodoById(params.id);
+  }
+}
+
+class Params extends Equatable {
+  final String id;
+
+  const Params({required this.id});
+
+  @override
+  List<Object?> get props => [id];
+}
+
+```
+
+```dart
+// lib/domain/usecases/add_todo.dart
+
+import 'package:dartz/dartz.dart';
+import 'package:equatable/equatable.dart';
+import '../entities/todo.dart';
+import '../repositories/todo_repository.dart';
+import '../../core/errors/failures.dart';
+import '../../core/usecases/usecase.dart';
+
+class AddTodo implements UseCase<TodoEntity, Params> {
+  final TodoRepository repository;
+
+  AddTodo(this.repository);
+
+  @override
+  Future<Either<Failure, TodoEntity>> call(Params params) {
+    return repository.addTodo(params.todo);
+  }
+}
+
+class Params extends Equatable {
+  final TodoEntity todo;
+
+  const Params({required this.todo});
+
+  @override
+  List<Object?> get props => [todo];
+}
+
+```
+
+```dart
+// lib/domain/usecases/update_todo.dart
+
+import 'package:dartz/dartz.dart';
+import 'package:equatable/equatable.dart';
+import '../entities/todo.dart';
+import '../repositories/todo_repository.dart';
+import '../../core/errors/failures.dart';
+import '../../core/usecases/usecase.dart';
+
+class UpdateTodo implements UseCase<TodoEntity, Params> {
+  final TodoRepository repository;
+
+  UpdateTodo(this.repository);
+
+  @override
+  Future<Either<Failure, TodoEntity>> call(Params params) {
+    return repository.updateTodo(params.todo);
+  }
+}
+
+class Params extends Equatable {
+  final TodoEntity todo;
+
+  const Params({required this.todo});
+
+  @override
+  List<Object?> get props => [todo];
+}
+
+```
+
+```dart
+// lib/domain/usecases/delete_todo.dart
+
+import 'package:dartz/dartz.dart';
+import 'package:equatable/equatable.dart';
+import '../repositories/todo_repository.dart';
+import '../../core/errors/failures.dart';
+import '../../core/usecases/usecase.dart';
+
+class DeleteTodo implements UseCase<void, Params> {
+  final TodoRepository repository;
+
+  DeleteTodo(this.repository);
+
+  @override
+  Future<Either<Failure, void>> call(Params params) {
+    return repository.deleteTodo(params.id);
+  }
+}
+
+class Params extends Equatable {
+  final String id;
+
+  const Params({required this.id});
+
+  @override
+  List<Object?> get props => [id];
+}
+
+```
+
+Make sure you have the base UseCase class:
+
+```dart
+// lib/core/usecases/usecase.dart
+
+import 'package:dartz/dartz.dart';
+import 'package:equatable/equatable.dart';
+import '../errors/failures.dart';
+
+abstract class UseCase<Type, Params> {
+  Future<Either<Failure, Type>> call(Params params);
+}
+
+class NoParams extends Equatable {
+  @override
+  List<Object?> get props => [];
+}
+
+```
+
+## Step 10: Implement BLoC
+
+Let's create the Todo BLoC:
+
+```dart
+// lib/presentation/blocs/todo/todo_event.dart
+
+import 'package:equatable/equatable.dart';
+import '../../../domain/entities/todo.dart';
+
+abstract class TodoEvent extends Equatable {
+  @override
+  List<Object?> get props => [];
+}
+
+class GetTodosEvent extends TodoEvent {}
+
+class GetTodoByIdEvent extends TodoEvent {
+  final String id;
+
+  GetTodoByIdEvent({required this.id});
+
+  @override
+  List<Object?> get props => [id];
+}
+
+class AddTodoEvent extends TodoEvent {
+  final TodoEntity todo;
+
+  AddTodoEvent({required this.todo});
+
+  @override
+  List<Object?> get props => [todo];
+}
+
+class UpdateTodoEvent extends TodoEvent {
+  final TodoEntity todo;
+
+  UpdateTodoEvent({required this.todo});
+
+  @override
+  List<Object?> get props => [todo];
+}
+
+class DeleteTodoEvent extends TodoEvent {
+  final String id;
+
+  DeleteTodoEvent({required this.id});
+
+  @override
+  List<Object?> get props => [id];
+}
+
+class ToggleTodoEvent extends TodoEvent {
+  final TodoEntity todo;
+
+  ToggleTodoEvent({required this.todo});
+
+  @override
+  List<Object?> get props => [todo];
+}
+
+```
+
+```dart
+// lib/presentation/blocs/todo/todo_state.dart
+
+import 'package:equatable/equatable.dart';
+import '../../../domain/entities/todo.dart';
+
+abstract class TodoState extends Equatable {
+  const TodoState();
+
+  @override
+  List<Object?> get props => [];
+}
+
+class TodoInitial extends TodoState {}
+
+class TodoLoading extends TodoState {}
+
+class TodosLoaded extends TodoState {
+  final List<TodoEntity> todos;
+
+  const TodosLoaded({required this.todos});
+
+  @override
+  List<Object?> get props => [todos];
+}
+
+class TodoLoaded extends TodoState {
+  final TodoEntity todo;
+
+  const TodoLoaded({required this.todo});
+
+  @override
+  List<Object?> get props => [todo];
+}
+
+class TodoError extends TodoState {
+  final String message;
+
+  const TodoError({required this.message});
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class TodoOperationSuccess extends TodoState {
+  final String message;
+
+  const TodoOperationSuccess({required this.message});
+
+  @override
+  List<Object?> get props => [message];
+}
+
+```
+
+```dart
+// lib/presentation/blocs/todo/todo_bloc.dart
+
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:uuid/uuid.dart';
+import '../../../domain/entities/todo.dart';
+import '../../../domain/usecases/add_todo.dart' as add;
+import '../../../domain/usecases/delete_todo.dart' as delete;
+import '../../../domain/usecases/get_todo_by_id.dart' as get_by_id;
+import '../../../domain/usecases/get_todos.dart';
+import '../../../domain/usecases/update_todo.dart' as update;
+import '../../../core/usecases/usecase.dart';
+import 'todo_event.dart';
+import 'todo_state.dart';
+
+class TodoBloc extends Bloc<TodoEvent, TodoState> {
+  final GetTodos getTodos;
+  final get_by_id.GetTodoById getTodoById;
+  final add.AddTodo addTodo;
+  final update.UpdateTodo updateTodo;
+  final delete.DeleteTodo deleteTodo;
+
+  TodoBloc({
+    required this.getTodos,
+    required this.getTodoById,
+    required this.addTodo,
+    required this.updateTodo,
+    required this.deleteTodo,
+  }) : super(TodoInitial()) {
+    on<GetTodosEvent>(_onGetTodos);
+    on<GetTodoByIdEvent>(_onGetTodoById);
+    on<AddTodoEvent>(_onAddTodo);
+    on<UpdateTodoEvent>(_onUpdateTodo);
+    on<DeleteTodoEvent>(_onDeleteTodo);
+    on<ToggleTodoEvent>(_onToggleTodo);
+  }
+
+  Future<void> _onGetTodos(
+    GetTodosEvent event,
+    Emitter<TodoState> emit,
+  ) async {
+    emit(TodoLoading());
+    final result = await getTodos(NoParams());
+    result.fold(
+      (failure) => emit(TodoError(message: failure.message)),
+      (todos) => emit(TodosLoaded(todos: todos)),
+    );
+  }
+
+  Future<void> _onGetTodoById(
+    GetTodoByIdEvent event,
+    Emitter<TodoState> emit,
+  ) async {
+    emit(TodoLoading());
+    final result = await getTodoById(get_by_id.Params(id: event.id));
+    result.fold(
+      (failure) => emit(TodoError(message: failure.message)),
+      (todo) => emit(TodoLoaded(todo: todo)),
+    );
+  }
+
+  Future<void> _onAddTodo(
+    AddTodoEvent event,
+    Emitter<TodoState> emit,
+  ) async {
+    emit(TodoLoading());
+    final uuid = const Uuid().v4();
+    final todo = event.todo.copyWith(
+      id: uuid,
+      createdAt: DateTime.now(),
+    );
+    final result = await addTodo(add.Params(todo: todo));
+    result.fold(
+      (failure) => emit(TodoError(message: failure.message)),
+      (_) {
+        emit(const TodoOperationSuccess(message: 'Todo added successfully'));
+        add(GetTodosEvent());
+      },
+    );
+  }
+
+  Future<void> _onUpdateTodo(
+    UpdateTodoEvent event,
+    Emitter<TodoState> emit,
+  ) async {
+    emit(TodoLoading());
+    final result = await updateTodo(update.Params(todo: event.todo));
+    result.fold(
+      (failure) => emit(TodoError(message: failure.message)),
+      (_) {
+        emit(const TodoOperationSuccess(message: 'Todo updated successfully'));
+        add(GetTodosEvent());
+      },
+    );
+  }
+
+  Future<void> _onDeleteTodo(
+    DeleteTodoEvent event,
+    Emitter<TodoState> emit,
+  ) async {
+    emit(TodoLoading());
+    final result = await deleteTodo(delete.Params(id: event.id));
+    result.fold(
+      (failure) => emit(TodoError(message: failure.message)),
+      (_) {
+        emit(const TodoOperationSuccess(message: 'Todo deleted successfully'));
+        add(GetTodosEvent());
+      },
+    );
+  }
+
+  Future<void> _onToggleTodo(
+    ToggleTodoEvent event,
+    Emitter<TodoState> emit,
+  ) async {
+    final todo = event.todo.copyWith(isCompleted: !event.todo.isCompleted);
+    add(UpdateTodoEvent(todo: todo));
+  }
+}
+
+```
+
+## Step 11: Implement the UI
+
+Now let's implement the UI components. First, update the TodoItem widget:
+
+```dart
+// lib/presentation/widgets/todo_item.dart
+
+import 'package:flutter/material.dart';
+import '../../domain/entities/todo.dart';
+
+class TodoItem extends StatelessWidget {
+  final TodoEntity todo;
+  final Function(TodoEntity) onToggle;
+  final Function(String) onDelete;
+  final Function(TodoEntity) onEdit;
+
+  const TodoItem({
+    Key? key,
+    required this.todo,
+    required this.onToggle,
+    required this.onDelete,
+    required this.onEdit,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            Checkbox(
+              value: todo.isCompleted,
+              onChanged: (_) => onToggle(todo),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    todo.title,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      decoration: todo.isCompleted
+                          ? TextDecoration.lineThrough
+                          : null,
+                    ),
+                  ),
+                  if (todo.description.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      todo.description,
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        decoration: todo.isCompleted
+                            ? TextDecoration.lineThrough
+                            : null,
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 8),
+                  Text(
+                    'Created: ${_formatDate(todo.createdAt)}',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[500],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.edit),
+              onPressed: () => onEdit(todo),
+            ),
+            IconButton(
+              icon: const Icon(Icons.delete),
+              color: Colors.red,
+              onPressed: () => onDelete(todo.id),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.day}/${date.month}/${date.year}';
+  }
+}
+
+```
+
+Update the TodoForm widget:
+
+```dart
+// lib/presentation/widgets/todo_form.dart
+
+import 'package:flutter/material.dart';
+import '../../domain/entities/todo.dart';
+
+class TodoForm extends StatefulWidget {
+  final TodoEntity? initialTodo;
+  final Function(String title, String description) onSubmit;
+
+  const TodoForm({
+    Key? key,
+    this.initialTodo,
+    required this.onSubmit,
+  }) : super(key: key);
+
+  @override
+  _TodoFormState createState() => _TodoFormState();
+}
+
+class _TodoFormState extends State<TodoForm> {
+  late final TextEditingController _titleController;
+  late final TextEditingController _descriptionController;
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController = TextEditingController(text: widget.initialTodo?.title);
+    _descriptionController = TextEditingController(text: widget.initialTodo?.description);
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: [
+          TextFormField(
+            controller: _titleController,
+            decoration: const InputDecoration(
+              labelText: 'Title',
+              border: OutlineInputBorder(),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter a title';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: _descriptionController,
+            decoration: const InputDecoration(
+              labelText: 'Description',
+              border: OutlineInputBorder(),
+            ),
+            maxLines: 3,
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton(
+            onPressed: () {
+              if (_formKey.currentState!.validate()) {
+                widget.onSubmit(
+                  _titleController.text,
+                  _descriptionController.text,
+                );
+              }
+            },
+            child: Text(widget.initialTodo == null ? 'Add Todo' : 'Update Todo'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+```
+
+Implement the TodoListScreen:
+
+```dart
+// lib/presentation/pages/todo_list_screen.dart
+
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../domain/entities/todo.dart';
+import '../blocs/todo/todo_bloc.dart';
+import '../blocs/todo/todo_event.dart';
+import '../blocs/todo/todo_state.dart';
+import '../widgets/todo_item.dart';
+import 'todo_form_screen.dart';
+
+class TodoListScreen extends StatelessWidget {
+  const TodoListScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Todo List'),
+      ),
+      body: BlocConsumer<TodoBloc, TodoState>(
+        listener: (context, state) {
+          if (state is TodoOperationSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.message)),
+            );
+          } else if (state is TodoError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.message)),
+            );
+          }
+        },
+        builder: (context, state) {
+          if (state is TodoInitial) {
+            context.read<TodoBloc>().add(GetTodosEvent());
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is TodoLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is TodosLoaded) {
+            return _buildTodoList(context, state.todos);
+          } else if (state is TodoError) {
+            return Center(child: Text(state.message));
+          }
+          return const Center(child: Text('Something went wrong'));
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _navigateToAddTodo(context),
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  Widget _buildTodoList(BuildContext context, List<TodoEntity> todos) {
+    if (todos.isEmpty) {
+      return const Center(
+        child: Text(
+          'No todos yet. Add one!',
+          style: TextStyle(fontSize: 18),
+        ),
+      );
+    }
+
+    return ListView.builder(
+      itemCount: todos.length,
+      itemBuilder: (context, index) {
+        final todo = todos[index];
+        return TodoItem(
+          todo: todo,
+          onToggle: (todo) => context.read<TodoBloc>().add(ToggleTodoEvent(todo: todo)),
+          onDelete: (id) => _showDeleteConfirmation(context, id),
+          onEdit: (todo) => _navigateToEditTodo(context, todo),
+        );
+      },
+    );
+  }
+
+  void _navigateToAddTodo(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => const TodoFormScreen(),
+      ),
+    );
+  }
+
+  void _navigateToEditTodo(BuildContext context, TodoEntity todo) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => TodoFormScreen(todoId: todo.id),
+      ),
+    );
+  }
+
+  void _showDeleteConfirmation(BuildContext context, String id) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Todo'),
+        content: const Text('Are you sure you want to delete this todo?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              context.read<TodoBloc>().add(DeleteTodoEvent(id: id));
+              Navigator.of(context).pop();
+            },
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+```
+
+Implement the TodoFormScreen:
+
+```dart
+// lib/presentation/pages/todo_form_screen.dart
+
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../domain/entities/todo.dart';
+import '../blocs/todo/todo_bloc.dart';
+import '../blocs/todo/todo_event.dart';
+import '../blocs/todo/todo_state.dart';
+import '../widgets/todo_form.dart';
+
+class TodoFormScreen extends StatefulWidget {
+  final String? todoId;
+
+  const TodoFormScreen({Key? key, this.todoId}) : super(key: key);
+
+  @override
+  _TodoFormScreenState createState() => _TodoFormScreenState();
+}
+
+class _TodoFormScreenState extends State<TodoFormScreen> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.todoId != null) {
+      context.read<TodoBloc>().add(GetTodoByIdEvent(id: widget.todoId!));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.todoId == null ? 'Add Todo' : 'Edit Todo'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: BlocConsumer<TodoBloc, TodoState>(
+          listener: (context, state) {
+            if (state is TodoOperationSuccess) {
+              Navigator.of(context).pop();
+            } else if (state is TodoError) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(state.message)),
+              );
+            }
+          },
+          builder: (context, state) {
+            if (widget.todoId != null && state is! TodoLoaded) {
+              if (state is TodoInitial || state is TodoLoading) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (state is TodoError) {
+                return Center(child: Text(state.message));
+              }
+              return const Center(child: Text('Something went wrong'));
+            }
+
+            final todo = state is TodoLoaded ? state.todo : null;
+
+            return TodoForm(
+              initialTodo: todo,
+              onSubmit: (title, description) {
+                if (widget.todoId == null) {
+                  final newTodo = TodoEntity(
+                    id: '', // Will be generated in the bloc
+                    title: title,
+                    description: description,
+                    isCompleted: false,
+                    createdAt: DateTime.now(),
+                  );
+                  context.read<TodoBloc>().add(AddTodoEvent(todo: newTodo));
+                } else if (todo != null) {
+                  final updatedTodo = todo.copyWith(
+                    title: title,
+                    description: description,
+                  );
+                  context.read<TodoBloc>().add(UpdateTodoEvent(todo: updatedTodo));
+                }
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+```
+
+## Step 12: Set Up Dependency Injection
+
+Create a service locator:
+
+```dart
+// lib/core/di/service_locator.dart
+
+import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../data/datasources/local/todo_local_data_source.dart';
+import '../../data/repositories/todo_repository_impl.dart';
+import '../../domain/repositories/todo_repository.dart';
+import '../../domain/usecases/add_todo.dart';
+import '../../domain/usecases/delete_todo.dart';
+import '../../domain/usecases/get_todo_by_id.dart';
+import '../../domain/usecases/get_todos.dart';
+import '../../domain/usecases/update_todo.dart';
+import '../../presentation/blocs/todo/todo_bloc.dart';
+
+final sl = GetIt.instance;
+
+Future<void> init() async {
+  // Bloc
+  sl.registerFactory(
+    () => TodoBloc(
+      getTodos: sl(),
+      getTodoById: sl(),
+      addTodo: sl(),
+      updateTodo: sl(),
+      deleteTodo: sl(),
+    ),
+  );
+
+  // Use cases
+  sl.registerLazySingleton(() => GetTodos(sl()));
+  sl.registerLazySingleton(() => GetTodoById(sl()));
+  sl.registerLazySingleton(() => AddTodo(sl()));
+  sl.registerLazySingleton(() => UpdateTodo(sl()));
+  sl.registerLazySingleton(() => DeleteTodo(sl()));
+
+  // Repository
+  sl.registerLazySingleton<TodoRepository>(
+    () => TodoRepositoryImpl(localDataSource: sl()),
+  );
+
+  // Data sources
+  sl.registerLazySingleton<TodoLocalDataSource>(
+    () => TodoLocalDataSourceImpl(sharedPreferences: sl()),
+  );
+
+  // External
+  final sharedPreferences = await SharedPreferences.getInstance();
+  sl.registerLazySingleton(() => sharedPreferences);
+}
+
+```
+
+## Step 13: Update main.dart
+
+Finally, update the main.dart file:
+
+```dart
+// lib/main.dart
+
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'core/di/service_locator.dart' as di;
+import 'presentation/blocs/todo/todo_bloc.dart';
+import 'presentation/pages/todo_list_screen.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await di.init();
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => di.sl<TodoBloc>(),
+      child: MaterialApp(
+        title: 'Todo App',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        home: const TodoListScreen(),
+      ),
+    );
+  }
+}
+
+```
+
+## Step 14: Update pubspec.yaml
+
+Make sure you have all the required dependencies:
+
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  # UI
+  cupertino_icons: ^1.0.2
+
+  # State Management
+  flutter_bloc: ^8.1.3
+
+  # Dependency Injection
+  get_it: ^7.6.0
+
+  # Functional Programming
+  dartz: ^0.10.1
+
+  # Value Equality
+  equatable: ^2.0.5
+
+  # Local Storage
+  shared_preferences: ^2.2.0
+
+  # Other
+  uuid: ^3.0.7
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+  mockito: ^5.4.0
+  build_runner: ^2.3.3
+
+```
+
+## Step 15: Run the Build Runner
+
+To generate the JSON serialization code, run:
+
+```bash
+flutter_bunny build
+
+```
+
+## Step 16: Run the App
+
+Now you can run your Todo application:
+
+```bash
+flutter run
+
+```
+
+## What's Next?
+
+You've successfully built a Todo application using Flutter Bunny CLI with Clean Architecture and Bloc for state management. Here are some ideas to enhance your app:
+
+1. Add theming support with dark mode
+2. Implement Firebase integration for cloud storage
+3. Add user authentication
+4. Implement categories or tags for todos
+5. Add due dates and reminders
+6. Implement search functionality
+7. Add filtering and sorting options
+
+You can use Flutter Bunny CLI to generate components for these features:
+
+```bash
+# Generate a theme switcher widget
+flutter_bunny generate widget --name ThemeSwitcher --stateful
+
+# Generate a user model
+flutter_bunny generate model --name User --fields "id:String,email:String,displayName:String" --json
+
+```
+
+## Conclusion
+
+In this tutorial, you've learned how to:
+
+1. Create a new Flutter project with Flutter Bunny CLI
+2. Generate models, screens, and widgets
+3. Implement the Clean Architecture pattern
+4. Use Bloc for state management
+5. Create a complete Todo application
+
+Flutter Bunny CLI helps you maintain a consistent project structure and follow best practices, making your Flutter development more efficient and organized.

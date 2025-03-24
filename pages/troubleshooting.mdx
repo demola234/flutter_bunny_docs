@@ -1,0 +1,362 @@
+# Troubleshooting Guide
+
+This guide helps you solve common issues you might encounter when using Flutter Bunny CLI.
+
+## Installation Issues
+
+### Command Not Found
+
+**Problem**: After installation, `flutter_bunny` command is not found.
+
+**Solution**:
+1. Make sure the Dart pub cache bin directory is in your PATH:
+
+   **Windows**:
+   ```
+   %APPDATA%\Pub\Cache\bin
+   ```
+
+   **macOS/Linux**:
+   ```
+   export PATH="$PATH":"$HOME/.pub-cache/bin"
+   ```
+
+2. Verify installation was successful:
+   ```bash
+   dart pub global list | grep flutter_bunny
+   ```
+
+3. Try reinstalling:
+   ```bash
+   dart pub global activate flutter_bunny
+   ```
+
+### Permission Denied
+
+**Problem**: Permission denied error when running Flutter Bunny CLI.
+
+**Solution**:
+
+**macOS/Linux**:
+```bash
+# Change permissions
+chmod +x $HOME/.pub-cache/bin/flutter_bunny
+
+# Or run with sudo (not recommended for regular use)
+sudo flutter_bunny <command>
+```
+
+**Windows**: Run Command Prompt or PowerShell as Administrator.
+
+## Create Command Issues
+
+### Project Creation Fails
+
+**Problem**: `flutter_bunny create app` fails with errors.
+
+**Solution**:
+1. Check if Flutter is properly installed:
+   ```bash
+   flutter doctor
+   ```
+
+2. Try with verbose logging:
+   ```bash
+   flutter_bunny create app --verbose
+   ```
+
+3. Make sure you have write permissions in the current directory.
+
+### Invalid Project Name
+
+**Problem**: Error about invalid project name.
+
+**Solution**:
+Use a name that follows Dart package naming conventions:
+- Lowercase letters
+- Underscores for spaces
+- No special characters
+
+```bash
+# Good
+flutter_bunny create app --name my_app
+
+# Bad (don't use these)
+flutter_bunny create app --name MyApp
+flutter_bunny create app --name "My App"
+flutter_bunny create app --name my-app
+```
+
+## Generate Command Issues
+
+### Generated Files in Wrong Location
+
+**Problem**: Generated files are created in the wrong directory.
+
+**Solution**:
+1. Make sure you're running the command from the project root.
+
+2. Check if your project follows the expected structure for the architecture you're using.
+
+3. Configure custom output paths:
+   ```bash
+   flutter_bunny config set generate.output_paths.screens "lib/ui/screens"
+   flutter_bunny config set generate.output_paths.widgets "lib/ui/widgets"
+   flutter_bunny config set generate.output_paths.models "lib/data/models"
+   ```
+
+### Invalid Parameters Format
+
+**Problem**: Error when using `--params` or `--fields` flags.
+
+**Solution**:
+Make sure you're using the correct format:
+- Use quotes around the entire string
+- Use `name:Type` format
+- Separate multiple parameters with commas
+- No spaces around colons or commas
+
+```bash
+# Correct
+flutter_bunny generate model --name User --fields "id:int,name:String,email:String"
+
+# Incorrect
+flutter_bunny generate model --name User --fields id:int, name:String, email:String
+```
+
+## Build Command Issues
+
+### build_runner Not Found
+
+**Problem**: Error that build_runner is not found.
+
+**Solution**:
+1. Make sure build_runner is in your pubspec.yaml:
+   ```yaml
+   dev_dependencies:
+     build_runner: ^2.3.0
+   ```
+
+2. Run Flutter pub get:
+   ```bash
+   flutter pub get
+   ```
+
+### Conflicting Outputs
+
+**Problem**: build_runner fails due to conflicting outputs.
+
+**Solution**:
+Use the `--delete-conflicting-outputs` flag:
+```bash
+flutter_bunny build --delete-conflicting-outputs
+```
+
+### Analyzer Errors Preventing Build
+
+**Problem**: Analyzer errors prevent build_runner from completing.
+
+**Solution**:
+1. Fix the analyzer errors first:
+   ```bash
+   flutter_bunny analyze --fix
+   ```
+
+2. Then run the build command again.
+
+## Analyze Command Issues
+
+### Too Many Errors
+
+**Problem**: Analyzer shows too many errors, making it hard to focus.
+
+**Solution**:
+Fix errors incrementally:
+1. Start with fatal errors:
+   ```bash
+   flutter_bunny analyze --no-fatal-warnings --no-fatal-infos
+   ```
+
+2. Then handle warnings:
+   ```bash
+   flutter_bunny analyze --no-fatal-infos
+   ```
+
+3. Finally, handle info messages:
+   ```bash
+   flutter_bunny analyze
+   ```
+
+## Doctor Command Issues
+
+### False Positives
+
+**Problem**: Doctor reports issues that are actually intentional or not relevant.
+
+**Solution**:
+1. Run with project-only flag to focus on your project issues:
+   ```bash
+   flutter_bunny doctor --project-only
+   ```
+
+2. Create a custom configuration for doctor checks:
+   ```bash
+   flutter_bunny config set doctor.checks.readme false
+   ```
+
+## Config Command Issues
+
+### Config Not Persisting
+
+**Problem**: Configuration changes don't seem to persist between runs.
+
+**Solution**:
+1. Check if you have write permissions to the config directory:
+   ```bash
+   # macOS/Linux
+   ls -la ~/.flutter_bunny/
+
+   # Windows
+   dir %USERPROFILE%\.flutter_bunny
+   ```
+
+2. Try running with administrator privileges (Windows) or sudo (macOS/Linux).
+
+3. Manually edit the config file (as a last resort):
+   ```bash
+   # macOS/Linux
+   nano ~/.flutter_bunny/config.yaml
+
+   # Windows
+   notepad %USERPROFILE%\.flutter_bunny\config.yaml
+   ```
+
+## Update Command Issues
+
+### Update Fails
+
+**Problem**: `flutter_bunny update` command fails.
+
+**Solution**:
+1. Try with force flag:
+   ```bash
+   flutter_bunny update --force
+   ```
+
+2. Uninstall and reinstall:
+   ```bash
+   dart pub global deactivate flutter_bunny
+   dart pub global activate flutter_bunny
+   ```
+
+## Template Issues
+
+### Custom Templates Not Working
+
+**Problem**: Custom templates are not being used.
+
+**Solution**:
+1. Check your template directory structure:
+   ```bash
+   # macOS/Linux
+   ls -la ~/.flutter_bunny/templates/
+
+   # Windows
+   dir %USERPROFILE%\.flutter_bunny\templates
+   ```
+
+2. Make sure template syntax is correct.
+
+3. Make sure you're referencing the template correctly:
+   ```bash
+   flutter_bunny create app --template my_custom_template
+   ```
+
+## Dependency Issues
+
+### Version Conflicts
+
+**Problem**: Dependency version conflicts.
+
+**Solution**:
+1. Check your Flutter version compatibility:
+   ```bash
+   flutter --version
+   ```
+
+2. Try updating Flutter:
+   ```bash
+   flutter upgrade
+   ```
+
+3. Run Flutter doctor to check for issues:
+   ```bash
+   flutter doctor -v
+   ```
+
+## Performance Issues
+
+### Commands Running Slowly
+
+**Problem**: Flutter Bunny CLI commands are running slowly.
+
+**Solution**:
+1. Check your system resources (CPU, RAM, disk space).
+
+2. Try clearing Flutter's cache:
+   ```bash
+   flutter clean
+   ```
+
+3. Try clearing Dart's pub cache (use with caution):
+   ```bash
+   dart pub cache clean
+   ```
+
+## Debugging
+
+### Enable Verbose Logging
+
+For detailed logs to help troubleshoot:
+
+```bash
+flutter_bunny --verbose <command>
+```
+
+### Check Environment
+
+To view your environment:
+
+```bash
+flutter_bunny doctor
+flutter --version
+dart --version
+```
+
+### Check Logs
+
+**macOS/Linux**:
+```bash
+cat ~/.flutter_bunny/logs/flutter_bunny.log
+```
+
+**Windows**:
+```bash
+type %USERPROFILE%\.flutter_bunny\logs\flutter_bunny.log
+```
+
+## Getting Help
+
+If you continue to experience issues:
+
+1. Check the [FAQ](./faq.md) for common questions.
+
+2. Search existing [GitHub issues](https://github.com/demola234/flutter_bunny_cli/issues).
+
+3. Open a new issue with:
+   - Command you're trying to run
+   - Error message
+   - Flutter and Dart versions
+   - Operating system
+   - Steps to reproduce
+   - Any relevant logs

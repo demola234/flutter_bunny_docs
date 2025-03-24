@@ -1,0 +1,132 @@
+The `generate` command allows you to create various Flutter application components with best practices baked in. It helps you quickly scaffold screens, widgets, models, and more.
+
+## Usage
+
+```bash
+flutter_bunny generate <component> [options]
+
+```
+
+Alias: `flutter_bunny g <component> [options]`
+
+## Available Components
+
+The `generate` command supports the following component types:
+
+- `screen` - Application screens/pages
+- `widget` - Reusable UI components
+- `model` - Data models with optional JSON serialization
+
+## Generate Screen
+
+Generate a new screen with routing and proper structure:
+
+```bash
+# Generate a new screen
+flutter_bunny generate screen --name HomeScreen
+
+# Generate a screen with specific route
+flutter_bunny generate screen --name ProfileScreen --route /profile
+
+# Generate a screen with parameters
+flutter_bunny generate screen --name ProductDetailScreen --params "id:int,name:String"
+
+```
+
+### Options
+
+- `-name` (required): The name of the screen (e.g., HomeScreen, ProfileScreen)
+- `-route`: The route path for this screen (e.g., /home, /profile/:id)
+- `-params`: Parameters for the screen in format "name:type,name2:type2"
+- `-stateful`: Generate as a StatefulWidget instead of StatelessWidget
+
+## Generate Widget
+
+Generate a reusable widget component:
+
+```bash
+# Generate a stateless widget
+flutter_bunny generate widget --name CustomButton
+
+# Generate a stateful widget
+flutter_bunny generate widget --name AnimatedCard --stateful
+
+# Generate a widget with parameters
+flutter_bunny generate widget --name ProductCard --params "product:Product,onTap:Function"
+
+```
+
+### Options
+
+- `-name` (required): The name of the widget (e.g., CustomButton, ProductCard)
+- `-stateful`: Generate as a StatefulWidget instead of StatelessWidget
+- `-params`: Parameters for the widget in format "name:type,name2:type2"
+
+## Generate Model
+
+Generate a data model with optional JSON serialization:
+
+```bash
+# Generate a basic model
+flutter_bunny generate model --name User
+
+# Generate a model with fields
+flutter_bunny generate model --name Product --fields "id:int,name:String,price:double,inStock:bool"
+
+# Generate a model with JSON serialization
+flutter_bunny generate model --name User --fields "id:int,name:String,email:String,createdAt:DateTime" --json
+
+```
+
+### Options
+
+- `-name` (required): The name of the model (e.g., User, Product)
+- `-fields`: Fields for the model in format "name:type,name2:type2"
+- `-json`: Enable JSON serialization for the model
+- `-freezed`: Use freezed package for immutable models
+
+## Examples
+
+### Generate a Login Screen
+
+```bash
+flutter_bunny generate screen --name LoginScreen --route /login
+
+```
+
+This will generate a login screen with the appropriate route configuration.
+
+### Generate a Product Card Widget
+
+```bash
+flutter_bunny generate widget --name ProductCard --stateful --params "product:Product,onAddToCart:Function"
+
+```
+
+This will generate a stateful widget for displaying product information with the specified parameters.
+
+### Generate a User Model with JSON Serialization
+
+```bash
+flutter_bunny generate model --name User --fields "id:int,name:String,email:String,isActive:bool,createdAt:DateTime" --json
+
+```
+
+This will generate a User model with the specified fields and JSON serialization support.
+
+## Output Structure
+
+The generated components will be placed in the appropriate directory based on your project's architecture pattern:
+
+- **Clean Architecture**:
+    - Screens go to `lib/presentation/pages/`
+    - Widgets go to `lib/presentation/widgets/`
+    - Models go to `lib/data/models/`
+- **MVVM**:
+    - Screens go to `lib/views/screens/`
+    - Widgets go to `lib/views/widgets/`
+    - Models go to `lib/models/`
+- **MVC**:
+    - Screens go to `lib/views/views/`
+    - Widgets go to `lib/views/widgets/`
+    - Models go to `lib/models/`

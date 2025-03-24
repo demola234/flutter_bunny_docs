@@ -1,0 +1,149 @@
+# Doctor Command
+
+The `doctor` command checks the health of your Flutter project and identifies common issues. It can also fix some problems automatically. This command helps ensure your project follows best practices and is properly configured.
+
+## Usage
+
+```bash
+flutter_bunny doctor [options]
+
+```
+
+## Options
+
+- `-directory` or `C`: Directory to check (default: ".")
+- `-project-only`: Only check project-specific issues, not Flutter SDK
+- `-fix` or `f`: Attempt to fix issues automatically
+
+## Examples
+
+### Check Project Health
+
+```bash
+flutter_bunny doctor
+
+```
+
+This will check your Flutter project for common issues and the Flutter environment.
+
+### Check Project Only
+
+```bash
+flutter_bunny doctor --project-only
+
+```
+
+This will only check project-specific issues, skipping the Flutter SDK check.
+
+### Check and Fix Issues
+
+```bash
+flutter_bunny doctor --fix
+
+```
+
+This will check your project and attempt to automatically fix any identified issues.
+
+### Check a Specific Directory
+
+```bash
+flutter_bunny doctor --directory ./packages/my_package
+
+```
+
+This will check the specified directory for issues.
+
+## What Doctor Checks
+
+The `doctor` command checks for various issues, including:
+
+### Flutter Environment
+
+- Flutter SDK installation and version
+- Development tools (Android Studio, Xcode, etc.)
+- Connected devices
+- Dependencies and plugins
+
+### Project Structure
+
+- Required files (`pubspec.yaml`, etc.)
+- Proper directory structure
+- Configuration files (analysis_options.yaml, etc.)
+- Test directory setup
+
+### Dependencies
+
+- Up-to-date dependencies
+- Pubspec.lock consistency
+- Conflicting dependencies
+
+### Best Practices
+
+- Gitignore configuration
+- README and documentation
+- License files
+- Project organization
+
+## Fixing Issues
+
+When run with the `--fix` flag, the doctor command can automatically fix several issues:
+
+- Generate missing configuration files
+- Update outdated dependencies
+- Create template files for tests
+- Set up proper .gitignore
+- Initialize missing directories
+
+## Example Output
+
+```
+Running Flutter doctor...
+Flutter environment looks good!
+
+Flutter Doctor Output:
+[✓] Flutter (Channel stable, 3.10.5, on macOS 13.4.1)
+[✓] Android toolchain - develop for Android devices
+[✓] Xcode - develop for iOS and macOS
+[✓] Chrome - develop for the web
+[✓] Android Studio (version 2022.1)
+[✓] VS Code (version 1.78.2)
+[✓] Connected device (2 available)
+[✓] HTTP Host Availability
+
+Checking project health...
+Found 3 issues with your project
+
+Project Health Check Results:
+1. Missing analysis_options.yaml
+   No analysis_options.yaml file found. This file helps maintain code quality.
+   This issue can be fixed automatically with --fix
+   Recommendations:
+   - Create an analysis_options.yaml file with appropriate lints
+   - Consider using package:lints/recommended.yaml as a base
+
+2. Empty test directory
+   The test directory exists but contains no tests.
+   Recommendations:
+   - Add unit, widget, and integration tests to your project
+   - Run "flutter test" to execute your tests
+
+3. Minimal lib directory structure
+   The lib directory has minimal structure. Consider organizing your code better.
+   Recommendations:
+   - Create subdirectories for different parts of your app (widgets, screens, models, etc.)
+   - Separate business logic from UI code
+
+```
+
+## Best Practices
+
+1. **Run doctor regularly**: Make it part of your development workflow
+2. **Fix critical issues first**: Focus on errors before warnings
+3. **Use the `-fix` option**: Let the tool fix common issues automatically
+4. **Follow recommendations**: Implement suggested changes for best practices
+5. **Run before releases**: Ensure your project is healthy before distribution
+
+## Related Commands
+
+- [`analyze`](https://claude.ai/chat/analyze.md): Run static analysis on your Flutter project
+- [`config`](https://claude.ai/chat/config.md): Manage Flutter Bunny CLI configuration

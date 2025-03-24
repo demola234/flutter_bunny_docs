@@ -1,0 +1,243 @@
+Thank you for your interest in contributing to Flutter Bunny CLI! This guide will help you get started with contributing to the project.
+
+## Getting Started
+
+### Prerequisites
+
+- Dart SDK (latest stable version)
+- Flutter SDK (latest stable version)
+- Git
+
+### Setting Up the Development Environment
+
+1. Fork the repository on GitHub
+2. Clone your forked repository
+
+    ```bash
+    git clone https://github.com/demola234/flutter_bunny_cli.git
+
+    ```
+
+3. Navigate to the project directory
+
+    ```bash
+    cd flutter_bunny_cli
+
+    ```
+
+4. Install dependencies
+
+    ```bash
+    dart pub get
+
+    ```
+
+
+## Project Structure
+
+The Flutter Bunny CLI project is structured as follows:
+
+```
+flutter_bunny/
+├── bin/
+│   └── flutter_bunny.dart       # Entry point
+├── lib/
+│   ├── src/
+│   │   ├── cli/                 # CLI runners and process management
+│   │   ├── commands/            # Command implementations
+│   │   ├── common/              # Shared utilities and models
+│   │   ├── templates/           # Templates for code generation
+│   │   └── version.dart         # Version information
+│   └── flutter_bunny.dart       # Library entry point
+├── test/                        # Test directory
+├── pubspec.yaml                 # Package information
+└── README.md                    # Project documentation
+
+```
+
+## Development Workflow
+
+### Creating a New Feature
+
+1. Create a new branch from `main`
+
+    ```bash
+    git checkout -b feature/your-feature-name
+
+    ```
+
+2. Implement your feature or fix a bug
+3. Write tests for your changes
+4. Run tests to ensure everything works
+
+    ```bash
+    dart test
+
+    ```
+
+5. Format your code
+
+    ```bash
+    dart format .
+
+    ```
+
+6. Run the analyzer
+
+    ```bash
+    dart analyze
+
+    ```
+
+7. Commit your changes
+
+    ```bash
+    git commit -m "Add your descriptive commit message"
+
+    ```
+
+8. Push to your fork
+
+    ```bash
+    git push origin feature/your-feature-name
+
+    ```
+
+9. Create a Pull Request on GitHub
+
+### Implementing a New Command
+
+To implement a new command for Flutter Bunny:
+
+1. Create a new file in `lib/src/commands/` for your command
+2. Extend the `Command<int>` class from `args` package
+3. Implement the required methods
+4. Register your command in `lib/src/commands/flutter_bunny_runner.dart`
+
+Example command implementation:
+
+```dart
+import 'package:args/command_runner.dart';
+import 'package:mason_logger/mason_logger.dart';
+
+class MyNewCommand extends Command<int> {
+  MyNewCommand({
+    required Logger logger,
+  }) : _logger = logger {
+    // Define arguments and flags
+    argParser
+      ..addOption(
+        'option-name',
+        help: 'Description of the option',
+        defaultsTo: 'default-value',
+      )
+      ..addFlag(
+        'flag-name',
+        help: 'Description of the flag',
+        negatable: false,
+      );
+  }
+
+  final Logger _logger;
+
+  @override
+  String get description => 'Description of your command';
+
+  @override
+  String get name => 'command-name';
+
+  @override
+  Future<int> run() async {
+    // Implement your command logic
+    final optionValue = argResults?['option-name'] as String;
+    final flagValue = argResults?['flag-name'] as bool;
+
+    _logger.info('Running command with option: $optionValue and flag: $flagValue');
+
+    // Do something...
+
+    return ExitCode.success.code;
+  }
+}
+
+```
+
+### Adding Templates
+
+To add new templates:
+
+1. Create template files in `lib/src/templates/`
+2. Use variables with double curly braces: `{{variable_name}}`
+3. Register the template in the appropriate generator
+
+### Testing
+
+We use the `test` package for testing. Please ensure all new features or bug fixes have corresponding tests.
+
+To run tests:
+
+```bash
+dart test
+
+```
+
+To run a specific test:
+
+```bash
+dart test test/commands/create_command_test.dart
+
+```
+
+## Code Style
+
+Please follow the Dart style guide and use the Dart formatter:
+
+```bash
+dart format .
+
+```
+
+## Pull Request Process
+
+1. Ensure your code is properly formatted and passes all tests
+2. Update documentation if needed
+3. Update the CHANGELOG.md file with your changes
+4. Create a Pull Request with a clear title and description
+5. Link any related issues in the Pull Request description
+
+## Reporting Issues
+
+When reporting issues, please include:
+
+1. A clear and descriptive title
+2. Steps to reproduce the issue
+3. Expected behavior
+4. Actual behavior
+5. Flutter and Dart version information
+6. Flutter Bunny CLI version information
+
+## Feature Requests
+
+Feature requests are welcome! Please provide:
+
+1. A clear and descriptive title
+2. A detailed description of the proposed feature
+3. Any relevant examples or use cases
+4. If possible, a sketch or mockup of how the feature might work
+
+## Code of Conduct
+
+Please note that this project adheres to a [Code of Conduct](https://github.com/demola234/flutter_bunny_cli/blob/main/CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code.
+
+## License
+
+By contributing to Flutter Bunny CLI, you agree that your contributions will be licensed under the project's [MIT License](https://github.com/demola234/flutter_bunny_cli/blob/main/LICENSE).
+
+## Contact
+
+If you have questions or need help, you can:
+
+- Open an [issue](https://github.com/demola234/flutter_bunny_cli/issues)
+- Reach out to the maintainers via [email](mailto:ademolakolawole45@gmail.com)
+
+Thank you for contributing to Flutter Bunny CLI!

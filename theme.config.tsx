@@ -2,16 +2,13 @@ import React from 'react'
 import { DocsThemeConfig } from 'nextra-theme-docs'
 
 const config: DocsThemeConfig = {
-  logo: <span>My Project</span>,
+  logo: <span>Flutter Bunny CLI</span>,
   project: {
-    link: 'https://github.com/shuding/nextra-docs-template',
+    link: 'https://github.com/demola234/flutter_bunny_cli/',
   },
-  chat: {
-    link: 'https://discord.com',
-  },
-  docsRepositoryBase: 'https://github.com/shuding/nextra-docs-template',
+    docsRepositoryBase: 'https://github.com/demola234/flutter_bunny_cli/docs',
   footer: {
-    text: 'Nextra Docs Template',
+    text: 'Flutter Bunny CLI Docs',
   },
 }
 

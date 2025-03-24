@@ -1,0 +1,120 @@
+# Analyze Command
+
+The `analyze` command runs static analysis on your Flutter project to identify potential issues, errors, and code style violations. It helps maintain code quality and catch problems early.
+
+## Usage
+
+```bash
+flutter_bunny analyze [options]
+
+```
+
+## Options
+
+- `-directory` or `C`: Directory to analyze (default: ".")
+- `-fix` or `f`: Apply fixes to the code
+- `-fatal-infos`: Treat info level issues as fatal
+- `-fatal-warnings`: Treat warning level issues as fatal (default: true)
+
+## Examples
+
+### Run Basic Analysis
+
+```bash
+flutter_bunny analyze
+
+```
+
+This will run static analysis on your Flutter project and report any issues found.
+
+### Run Analysis and Apply Fixes
+
+```bash
+flutter_bunny analyze --fix
+
+```
+
+This will run static analysis and attempt to automatically fix issues where possible.
+
+### Analyze a Specific Directory
+
+```bash
+flutter_bunny analyze --directory ./packages/my_package
+
+```
+
+This will run analysis only on the specified directory.
+
+### Configure Severity Levels
+
+```bash
+flutter_bunny analyze --no-fatal-warnings
+
+```
+
+This will prevent warning-level issues from causing the command to fail.
+
+## Understanding the Results
+
+The analysis results are categorized into:
+
+- **Errors**: Critical issues that need to be fixed
+- **Warnings**: Potential problems or code style violations
+- **Info**: Informational issues that might be worth addressing
+
+Example output:
+
+```
+Analysis Results:
+Errors:   2
+Warnings: 5
+Info:     3
+
+info • Use parameter documentation comments • lib/src/models/user.dart:15:18 • use_parameter_documentation_comments
+warning • Missing parameter type • lib/src/utils/helpers.dart:22:24 • missing_parameter_type
+error • The method 'doSomething' isn't defined for the class 'MyClass' • lib/src/widgets/custom_widget.dart:45:12 • undefined_method
+
+To automatically fix some issues, try:
+  flutter_bunny analyze --fix
+
+```
+
+## Customizing Analysis Rules
+
+Flutter Bunny uses the standard Flutter analysis rules, but you can customize them by creating an `analysis_options.yaml` file in your project root.
+
+Example `analysis_options.yaml`:
+
+```yaml
+include: package:lints/recommended.yaml
+
+linter:
+  rules:
+    - always_declare_return_types
+    - prefer_single_quotes
+    - sort_child_properties_last
+    - unawaited_futures
+    - use_key_in_widget_constructors
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+  errors:
+    missing_return: error
+    missing_required_param: error
+
+```
+
+## Best Practices
+
+1. **Run analysis regularly**: Make it part of your development workflow
+2. **Fix errors immediately**: Don't let errors accumulate
+3. **Review warnings**: They often indicate potential problems
+4. **Use the `-fix` option**: Automatically fix common issues
+5. **Customize analysis rules**: Tailor them to your project's needs
+
+## Related Commands
+
+- [`doctor`](https://claude.ai/chat/doctor.md): Check the health of your Flutter project
+- [`build`](https://claude.ai/chat/build.md): Run build_runner to generate code

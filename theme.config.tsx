@@ -49,7 +49,7 @@ const config: DocsThemeConfig = {
       },
     }
   },
-  // Add other required properties
+
   darkMode: true,
   nextThemes: {
     defaultTheme: 'system',

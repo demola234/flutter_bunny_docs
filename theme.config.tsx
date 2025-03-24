@@ -14,6 +14,7 @@ const config: DocsThemeConfig = {
       />
     </div>
   ),
+  title: 'Flutter Bunny CLI Docs',
   project: {
     link: 'https://github.com/demola234/flutter_bunny_cli/',
   },
@@ -26,6 +27,12 @@ const config: DocsThemeConfig = {
       <link rel="icon" type="image/png" href="/bunny_logo.png" />
     </>
   ),
+  useNextSeoProps() {
+      return {
+        titleTemplate: '%s - Flutter Bunny CLI',
+        defaultTitle: 'Flutter Bunny CLI - A Flutter Development Tool'
+      }
+    },
 //   head: (
 //       <>
 //         <link rel="icon" href="/favicon.ico" sizes="any" />

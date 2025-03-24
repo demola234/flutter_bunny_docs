@@ -1,4 +1,17 @@
-# Flutter Bunny CLI (Beta) 🐰
+import { Cards, Card } from 'nextra/components'
+import { Callout } from 'nextra/components'
+import Image from 'next/image'
+
+<div style={{ display: 'flex', alignItems: 'center' }}>
+  <h1 style={{ margin: 0, fontSize: '2.5rem', fontWeight: 'bold' }}>Flutter Bunny CLI (Beta)</h1>
+  <Image
+    src="/bunny_logo.png"
+    alt="logo"
+    width={30}
+    height={30}
+    style={{ marginLeft: '12px' }}
+  />
+</div>
 
 Welcome to the Flutter Bunny CLI documentation site! This guide will help you navigate through the available resources and find the information you need.
 # About Flutter Bunny CLI
@@ -13,13 +26,13 @@ Flutter Bunny CLI was created to solve common challenges in Flutter development:
 2. **Boilerplate Code**: Flutter development often requires writing repetitive boilerplate code
 3. **Architecture Decisions**: Many teams struggle with choosing and implementing an architecture pattern
 4. **Maintenance Overhead**: As projects grow, maintaining a clean and consistent codebase becomes challenging
+5. **Increase Productivity**: Developers should spend less time on setup and more time on building features
 
 The goal was to create a tool that would provide sensible defaults and best practices while still allowing flexibility for customization.
 
 ## Core Principles
 
 Flutter Bunny CLI is built on these core principles:
-
 ### 1. Convention Over Configuration
 
 We provide sensible defaults so you can focus on building features rather than deciding on folder structures and patterns.

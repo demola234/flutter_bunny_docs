@@ -4,6 +4,7 @@
     "type": "doc"
   },
   "Commands": "Commands",
+  "set_up_guide": "Feature Guide",
   "Tutorials": "Tutorials",
   "architectural_structure": "Architecture",
   "state_management_guide": "State Management Guide",

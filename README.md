@@ -1,23 +1,66 @@
-# Nextra Docs Template 
+# Flutter Bunny CLI Documentation
 
-This is a template for creating documentation with [Nextra](https://nextra.site).
+### Welcome to the Flutter Bunny CLI documentation site! This guide will help you navigate through the available resources and find the information you need.
+## About Flutter Bunny CLI
 
-[**Live Demo →**](https://nextra-docs-template.vercel.app)
+Flutter Bunny CLI is a tool designed to streamline Flutter application development by providing an opinionated approach to project structure, architecture, and code generation.
 
-[![](.github/screenshot.png)](https://nextra-docs-template.vercel.app)
+## The Story Behind Flutter Bunny CLI
 
-## Quick Start
+Flutter Bunny CLI was created to solve common challenges in Flutter development:
 
-Click the button to clone this repository and deploy it on Vercel:
+1. **Inconsistent Project Structure**: Every developer had a different way of organizing their Flutter projects
+2. **Boilerplate Code**: Flutter development often requires writing repetitive boilerplate code
+3. **Architecture Decisions**: Many teams struggle with choosing and implementing an architecture pattern
+4. **Maintenance Overhead**: As projects grow, maintaining a clean and consistent codebase becomes challenging
+5. **Increase Productivity**: Developers should spend less time on setup and more time on building features
 
-[![](https://vercel.com/button)](https://vercel.com/new/clone?s=https%3A%2F%2Fgithub.com%2Fshuding%2Fnextra-docs-template&showOptionalTeamCreation=false)
+The goal was to create a tool that would provide sensible defaults and best practices while still allowing flexibility for customization.
 
-## Local Development
+## Core Principles
 
-First, run `pnpm i` to install the dependencies.
+Flutter Bunny CLI is built on these core principles:
+### 1. Convention Over Configuration
 
-Then, run `pnpm dev` to start the development server and visit localhost:3000.
+We provide sensible defaults so you can focus on building features rather than deciding on folder structures and patterns.
+
+### 2. Best Practices First
+
+All templates and generated code follow Flutter best practices, ensuring your project starts with a solid foundation.
+
+### 3. Flexibility
+
+While opinionated, Flutter Bunny CLI allows for customization to match your team's specific needs.
+
+### 4. Developer Experience
+
+The CLI is designed to be intuitive and helpful, with clear error messages and guidance.
+
+## Project Status
+
+Flutter Bunny CLI is currently in beta. We're actively developing new features and improvements while maintaining a stable core that's ready for everyday use.
+
+## Roadmap
+
+Our roadmap includes:
+
+- **Template Marketplace**: A platform for sharing and discovering custom templates
+- **Plugin System**: Extend Flutter Bunny CLI with plugins
+- **Web UI**: A web interface for managing your projects
+- **More Architecture Patterns**: Support for additional architecture patterns
+
+## Contributors
+
+Flutter Bunny CLI is maintained by [Ademola Kolawole](https://github.com/demola234) with contributions from the Flutter community.
 
 ## License
 
-This project is licensed under the MIT License.
+Flutter Bunny CLI is available under the MIT license. See the [LICENSE](https://github.com/demola234/flutter_bunny_cli/blob/main/LICENSE) file for more info.
+
+## Acknowledgements
+
+We'd like to thank:
+- The Flutter team for creating such an amazing framework
+- The Mason package for inspiration on CLI design
+- All the contributors who have helped shape this project
+- The Flutter community for their feedback and support

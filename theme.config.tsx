@@ -1,5 +1,6 @@
-import Image from 'next/image'
+import React from 'react'
 import { DocsThemeConfig } from 'nextra-theme-docs'
+import Image from 'next/image'
 
 const config: DocsThemeConfig = {
   logo: (

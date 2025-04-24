@@ -1,132 +1,87 @@
-The `generate` command allows you to create various Flutter application components with best practices baked in. It helps you quickly scaffold screens, widgets, models, and more.
-
-## Usage
-
-```bash
-flutter_bunny generate <component> [options]
-
-```
-
-Alias: `flutter_bunny g <component> [options]`
-
-## Available Components
-
-The `generate` command supports the following component types:
-
-- `screen` - Application screens/pages
-- `widget` - Reusable UI components
-- `model` - Data models with optional JSON serialization
-
-## Generate Screen
-
-Generate a new screen with routing and proper structure:
-
-```bash
-# Generate a new screen
-flutter_bunny generate screen --name HomeScreen
-
-# Generate a screen with specific route
-flutter_bunny generate screen --name ProfileScreen --route /profile
-
-# Generate a screen with parameters
-flutter_bunny generate screen --name ProductDetailScreen --params "id:int,name:String"
-
-```
-
-### Options
-
-- `-name` (required): The name of the screen (e.g., HomeScreen, ProfileScreen)
-- `-route`: The route path for this screen (e.g., /home, /profile/:id)
-- `-params`: Parameters for the screen in format "name:type,name2:type2"
-- `-stateful`: Generate as a StatefulWidget instead of StatelessWidget
-
-## Generate Widget
-
-Generate a reusable widget component:
-
-```bash
-# Generate a stateless widget
-flutter_bunny generate widget --name CustomButton
-
-# Generate a stateful widget
-flutter_bunny generate widget --name AnimatedCard --stateful
-
-# Generate a widget with parameters
-flutter_bunny generate widget --name ProductCard --params "product:Product,onTap:Function"
-
-```
-
-### Options
-
-- `-name` (required): The name of the widget (e.g., CustomButton, ProductCard)
-- `-stateful`: Generate as a StatefulWidget instead of StatelessWidget
-- `-params`: Parameters for the widget in format "name:type,name2:type2"
-
 ## Generate Model
 
-Generate a data model with optional JSON serialization:
+Generate a data model with flexible JSON serialization options:
 
 ```bash
-# Generate a basic model
+# Generate a model with interactive mode
 flutter_bunny generate model --name User
 
-# Generate a model with fields
-flutter_bunny generate model --name Product --fields "id:int,name:String,price:double,inStock:bool"
+# Generate a model with specific serialization
+flutter_bunny generate model --name Product --serializer json_serializable
 
-# Generate a model with JSON serialization
-flutter_bunny generate model --name User --fields "id:int,name:String,email:String,createdAt:DateTime" --json
+# Generate a model from JSON sample
+flutter_bunny generate model --name User --json '{"id": 1, "name": "John", "email": "john@example.com"}'
 
+# Generate a model in non-interactive mode
+flutter_bunny generate model --name Order --interactive false
 ```
 
 ### Options
 
-- `-name` (required): The name of the model (e.g., User, Product)
-- `-fields`: Fields for the model in format "name:type,name2:type2"
-- `-json`: Enable JSON serialization for the model
-- `-freezed`: Use freezed package for immutable models
+- `--name` or `-n` (required in non-interactive mode): The name of the model (e.g., User, Product)
+- `--directory` or `-d`: Directory to create the model in (default: `lib/models`)
+- `--serializer` or `-s`: JSON serialization method to use:
+  - `freezed` - Code generation for immutable classes with unions/pattern-matching
+  - `json_serializable` - Simple JSON serialization (default)
+  - `manual` - Custom toJson/fromJson methods
+  - `equatable` - Simple classes with value equality
+- `--interactive` or `-i`: Use interactive mode to configure model (default: true)
+- `--json`: JSON sample to generate model from (can be a string or loaded from a file)
 
-## Examples
+### Interactive Mode
 
-### Generate a Login Screen
+When running in interactive mode (`--interactive true`), the command will:
+
+1. Prompt for a model name if not provided
+2. Allow selection of serialization method with descriptions
+3. Offer to provide a JSON sample:
+   - Enter JSON directly
+   - Load JSON from a file
+4. Detect complex nested structures and offer to generate multiple related model files
+5. Suggest required dependencies for the chosen serialization method
+
+### Examples
+
+#### Generate a User Model with Interactive Configuration
 
 ```bash
-flutter_bunny generate screen --name LoginScreen --route /login
-
+flutter_bunny generate model
 ```
 
-This will generate a login screen with the appropriate route configuration.
+This will start an interactive session to configure your model.
 
-### Generate a Product Card Widget
+#### Generate a Product Model with Freezed Serialization
 
 ```bash
-flutter_bunny generate widget --name ProductCard --stateful --params "product:Product,onAddToCart:Function"
-
+flutter_bunny generate model --name Product --serializer freezed
 ```
 
-This will generate a stateful widget for displaying product information with the specified parameters.
+This will generate a Product model using Freezed for immutability and JSON serialization.
 
-### Generate a User Model with JSON Serialization
+#### Generate a Model from a JSON File
 
 ```bash
-flutter_bunny generate model --name User --fields "id:int,name:String,email:String,isActive:bool,createdAt:DateTime" --json
-
+flutter_bunny generate model --name ApiResponse --json path/to/sample.json
 ```
 
-This will generate a User model with the specified fields and JSON serialization support.
+This will parse the JSON file and generate an appropriate model with detected fields.
 
-## Output Structure
+#### Generate Multiple Related Models from Complex JSON
 
-The generated components will be placed in the appropriate directory based on your project's architecture pattern:
+```bash
+flutter_bunny generate model --name Order --json '{"id": 123, "items": [{"productId": 1, "quantity": 2}], "customer": {"id": 456, "name": "John Doe"}}'
+```
 
-- **Clean Architecture**:
-    - Screens go to `lib/presentation/pages/`
-    - Widgets go to `lib/presentation/widgets/`
-    - Models go to `lib/data/models/`
-- **MVVM**:
-    - Screens go to `lib/views/screens/`
-    - Widgets go to `lib/views/widgets/`
-    - Models go to `lib/models/`
-- **MVC**:
-    - Screens go to `lib/views/views/`
-    - Widgets go to `lib/views/widgets/`
-    - Models go to `lib/models/`
+In interactive mode, this will detect nested structures and offer to generate separate models for Order, OrderItem, and Customer.
+
+### Generated Output
+
+The command will:
+
+1. Create model files in the specified directory (default: `lib/models`)
+2. Generate appropriate serialization code based on the selected method
+3. Add any necessary part declarations for code generation
+4. Suggest required dependencies to add to your pubspec.yaml
+5. Provide the command to run build_runner if needed
+
+For complex JSON structures with nested objects, multiple interrelated model files may be generated with proper imports.

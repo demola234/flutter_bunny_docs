@@ -4,11 +4,11 @@
     "type": "doc"
   },
   "Commands": "Commands",
+  "set_up_guide": "Feature Guide",
   "Tutorials": "Tutorials",
   "architectural_structure": "Architecture",
   "state_management_guide": "State Management Guide",
   "project_structure": "Project Structure",
-  "set_up_guide": "Set Up Guide",
   "customization_guide": "Customization Guide",
   "command_cheat_sheet": "Command Cheat Sheet",
   "troubleshooting": "Troubleshooting",

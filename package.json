@@ -1,6 +1,6 @@
 {
   "name": "flutter_bunny",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Flutter Bunny CLI is a powerful code generation tool designed to accelerate Flutter application development by providing a structured, customizable approach to project scaffolding. It helps developers quickly set up Flutter projects with different architectures, state management solutions, and features, allowing them to focus on building app-specific functionality rather than spending time on repetitive setup tasks.",
   "scripts": {
     "dev": "next dev",

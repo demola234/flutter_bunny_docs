@@ -38,7 +38,7 @@ The CLI is designed to be intuitive and helpful, with clear error messages and g
 
 ## Project Status
 
-Flutter Bunny CLI is currently in beta. We're actively developing new features and improvements while maintaining a stable core that's ready for everyday use.
+Flutter Bunny CLI is currently in stable. We're actively developing new features and improvements while maintaining a stable core that's ready for everyday use.
 
 ## Roadmap
 
